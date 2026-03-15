@@ -12,9 +12,11 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Tina needs these at build time (can be empty for local/self-hosted)
-ENV NEXT_PUBLIC_TINA_CLIENT_ID=""
-ENV TINA_TOKEN=""
+# Tina needs these at build time - set via Coolify env vars
+ARG NEXT_PUBLIC_TINA_CLIENT_ID
+ARG TINA_TOKEN
+ENV NEXT_PUBLIC_TINA_CLIENT_ID=$NEXT_PUBLIC_TINA_CLIENT_ID
+ENV TINA_TOKEN=$TINA_TOKEN
 
 RUN npm run build
 
