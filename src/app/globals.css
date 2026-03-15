@@ -1,0 +1,141 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: #00B4D8;
+    color: #fff;
+  }
+
+  .dark ::selection {
+    background-color: #00B4D8;
+    color: #0f1419;
+  }
+}
+
+/* Prose styles for blog content */
+.prose {
+  @apply text-charcoal dark:text-dark-text leading-relaxed;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply font-serif text-charcoal dark:text-cream font-bold;
+}
+
+.prose h1 { @apply text-4xl mt-12 mb-6; }
+.prose h2 { @apply text-3xl mt-10 mb-4; }
+.prose h3 { @apply text-2xl mt-8 mb-3; }
+.prose h4 { @apply text-xl mt-6 mb-2; }
+
+.prose p {
+  @apply mb-6 text-lg;
+}
+
+.prose a {
+  @apply text-turquoise hover:underline;
+}
+
+.prose ul, .prose ol {
+  @apply mb-6 pl-6;
+}
+
+.prose li {
+  @apply mb-2 text-lg;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-turquoise pl-6 italic text-charcoal-light dark:text-dark-muted my-6;
+}
+
+.prose pre {
+  @apply bg-charcoal dark:bg-dark-surface text-cream p-6 rounded-lg overflow-x-auto my-6;
+}
+
+.prose code {
+  @apply text-sm;
+}
+
+.prose img {
+  @apply rounded-lg my-8;
+}
+
+/* Ambient gradient animation for hero */
+.ambient-gradient {
+  background: linear-gradient(
+    135deg,
+    #FAFAF7 0%,
+    #F0EDE8 25%,
+    #FAFAF7 50%,
+    #E8E4DE 75%,
+    #FAFAF7 100%
+  );
+  background-size: 400% 400%;
+  animation: ambient 12s ease infinite;
+}
+
+.dark .ambient-gradient {
+  background: linear-gradient(
+    135deg,
+    #0f1419 0%,
+    #1a1f26 25%,
+    #0f1419 50%,
+    #161b22 75%,
+    #0f1419 100%
+  );
+  background-size: 400% 400%;
+}
+
+@keyframes ambient {
+  0%, 100% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+}
+
+/* Smooth theme transitions */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F0EDE8;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4CFC7;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0f1419;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #2d333b;
+}
+
+/* Delay utility classes for staggered animations */
+.delay-100 { animation-delay: 0.1s; opacity: 0; }
+.delay-200 { animation-delay: 0.2s; opacity: 0; }
+.delay-300 { animation-delay: 0.3s; opacity: 0; }
+.delay-400 { animation-delay: 0.4s; opacity: 0; }
+.delay-500 { animation-delay: 0.5s; opacity: 0; }

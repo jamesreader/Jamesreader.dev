@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daedalus</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: #000; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  canvas { display: block; }
+
+  /* Settings gear */
+  #gear {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    z-index: 100;
+    opacity: 0.4;
+    transition: opacity 0.3s, transform 0.3s;
+    filter: drop-shadow(0 0 4px rgba(0,229,255,0.5));
+  }
+  #gear:hover { opacity: 1; transform: rotate(30deg); }
+  #gear.open { opacity: 1; transform: rotate(90deg); }
+
+  /* Settings panel */
+  #settings {
+    position: fixed;
+    top: 64px;
+    right: 16px;
+    background: rgba(0, 0, 20, 0.85);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    z-index: 99;
+    min-width: 240px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transform: translateX(calc(100% + 20px));
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+  }
+  #settings.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+  #settings h3 {
+    color: #00e5ff;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .setting-row:last-child { margin-bottom: 0; }
+  .setting-label {
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+  }
+
+  /* Toggle switch */
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+  }
+  .toggle input { display: none; }
+  .toggle .slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+    transition: background 0.3s;
+  }
+  .toggle .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    transition: transform 0.3s, background 0.3s;
+  }
+  .toggle input:checked + .slider {
+    background: rgba(0, 229, 255, 0.3);
+  }
+  .toggle input:checked + .slider::before {
+    transform: translateX(20px);
+    background: #00e5ff;
+    box-shadow: 0 0 8px rgba(0,229,255,0.5);
+  }
+</style>
+</head>
+<body>
+
+<!-- Gear icon -->
+<svg id="gear" viewBox="0 0 24 24" fill="none" stroke="#00e5ff" stroke-width="1.5" onclick="toggleSettings()">
+  <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+</svg>
+
+<!-- Settings panel -->
+<div id="settings">
+  <h3>Settings</h3>
+  <div class="setting-row">
+    <span class="setting-label">Title Text</span>
+    <label class="toggle">
+      <input type="checkbox" id="opt-title" onchange="toggleOption('title')">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">Color Shift</span>
+    <label class="toggle">
+      <input type="checkbox" id="opt-colorshift" onchange="toggleOption('colorshift')">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">Tap Burst</span>
+    <label class="toggle">
+      <input type="checkbox" id="opt-burst" onchange="toggleOption('burst')">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">Ambient Audio</span>
+    <label class="toggle">
+      <input type="checkbox" id="opt-audio" onchange="toggleOption('audio')">
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// --- Settings ---
+const options = { title: false, colorshift: false, burst: false, audio: false };
+let audioCtx, audioGain, audioOsc1, audioOsc2, audioLfo;
+
+function toggleSettings() {
+  document.getElementById('gear').classList.toggle('open');
+  document.getElementById('settings').classList.toggle('open');
+}
+
+function toggleOption(key) {
+  options[key] = document.getElementById('opt-' + key).checked;
+  if (key === 'title') toggleTitle();
+  if (key === 'audio') toggleAudio();
+}
+
+// --- Config ---
+const PARTICLE_COUNT = 400;
+const CONNECTION_DISTANCE = 160;
+const MOUSE_INFLUENCE = 150;
+const DRIFT_SPEED = 0.3;
+const BOUNDS = { x: 500, y: 350, z: 250 };
+const BURST_COUNT = 30;
+
+let scene, camera, renderer, particlePoints, lines;
+let particleData = [];
+let mouse = new THREE.Vector2(9999, 9999);
+let mouseWorld = new THREE.Vector3(9999, 9999, 0);
+let time = 0;
+let titleMesh = null;
+
+// Color palette
+const baseColors = [
+  new THREE.Color(0x00e5ff),
+  new THREE.Color(0x00bcd4),
+  new THREE.Color(0x7c4dff),
+  new THREE.Color(0x18ffff),
+  new THREE.Color(0x651fff),
+  new THREE.Color(0x00e676),
+];
+
+function init() {
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x000008, 0.0008);
+
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+  camera.position.z = 500;
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000008, 1);
+  document.body.appendChild(renderer.domElement);
+
+  createParticles(PARTICLE_COUNT);
+  createLines();
+  createTitle();
+
+  window.addEventListener('resize', onResize);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('touchmove', onTouchMove, { passive: true });
+  window.addEventListener('click', onTap);
+  window.addEventListener('touchstart', onTapTouch, { passive: true });
+}
+
+function createParticles(count, origin, burst) {
+  const startIdx = particleData.length;
+  for (let i = 0; i < count; i++) {
+    const p = {
+      pos: origin ? origin.clone().add(new THREE.Vector3(
+        (Math.random() - 0.5) * 40,
+        (Math.random() - 0.5) * 40,
+        (Math.random() - 0.5) * 40
+      )) : new THREE.Vector3(
+        (Math.random() - 0.5) * BOUNDS.x * 2,
+        (Math.random() - 0.5) * BOUNDS.y * 2,
+        (Math.random() - 0.5) * BOUNDS.z * 2
+      ),
+      vel: burst ? new THREE.Vector3(
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 2
+      ) : new THREE.Vector3(
+        (Math.random() - 0.5) * DRIFT_SPEED,
+        (Math.random() - 0.5) * DRIFT_SPEED,
+        (Math.random() - 0.5) * DRIFT_SPEED * 0.5
+      ),
+      color: baseColors[Math.floor(Math.random() * baseColors.length)].clone(),
+      baseColor: baseColors[Math.floor(Math.random() * baseColors.length)].clone(),
+      size: burst ? Math.random() * 8 + 5 : Math.random() * 6 + 4,
+      phase: Math.random() * Math.PI * 2,
+      orbitSpeed: (Math.random() - 0.5) * 0.005,
+      life: burst ? 1.0 : -1, // -1 = permanent
+      isBurst: !!burst,
+    };
+    particleData.push(p);
+  }
+  rebuildParticleGeometry();
+}
+
+function rebuildParticleGeometry() {
+  const count = particleData.length;
+  const positions = new Float32Array(count * 3);
+  const colorsArr = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const p = particleData[i];
+    positions[i * 3] = p.pos.x;
+    positions[i * 3 + 1] = p.pos.y;
+    positions[i * 3 + 2] = p.pos.z;
+    colorsArr[i * 3] = p.color.r;
+    colorsArr[i * 3 + 1] = p.color.g;
+    colorsArr[i * 3 + 2] = p.color.b;
+    sizes[i] = p.size;
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colorsArr, 3));
+  geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      attribute float size;
+      varying vec3 vColor;
+      void main() {
+        vColor = color;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = size * (600.0 / -mvPosition.z);
+        gl_Position = projectionMatrix * mvPosition;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        if (d > 0.5) discard;
+        float glow = 1.0 - smoothstep(0.0, 0.5, d);
+        glow = pow(glow, 1.5);
+        gl_FragColor = vec4(vColor * glow * 2.5, glow);
+      }
+    `,
+    transparent: true,
+    vertexColors: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+
+  if (particlePoints) scene.remove(particlePoints);
+  particlePoints = new THREE.Points(geometry, material);
+  scene.add(particlePoints);
+}
+
+function createLines() {
+  const maxLines = 6000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(maxLines * 6);
+  const colorsArr = new Float32Array(maxLines * 6);
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colorsArr, 3));
+  geometry.setDrawRange(0, 0);
+
+  const material = new THREE.LineBasicMaterial({
+    vertexColors: true,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    opacity: 0.8,
+    linewidth: 2,
+  });
+
+  lines = new THREE.LineSegments(geometry, material);
+  scene.add(lines);
+}
+
+function createTitle() {
+  // Canvas-based text
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#00e5ff';
+  ctx.font = 'bold 120px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('DAEDALUS', 512, 128);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    opacity: 0,
+  });
+
+  const geometry = new THREE.PlaneGeometry(500, 125);
+  titleMesh = new THREE.Mesh(geometry, material);
+  titleMesh.position.z = -100;
+  scene.add(titleMesh);
+}
+
+function toggleTitle() {
+  // Smooth fade handled in animate
+}
+
+function toggleAudio() {
+  if (options.audio) {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioGain = audioCtx.createGain();
+      audioGain.gain.value = 0;
+      audioGain.connect(audioCtx.destination);
+
+      // Deep drone
+      audioOsc1 = audioCtx.createOscillator();
+      audioOsc1.type = 'sine';
+      audioOsc1.frequency.value = 55;
+      const gain1 = audioCtx.createGain();
+      gain1.gain.value = 0.15;
+      audioOsc1.connect(gain1);
+      gain1.connect(audioGain);
+      audioOsc1.start();
+
+      // Higher harmonic
+      audioOsc2 = audioCtx.createOscillator();
+      audioOsc2.type = 'sine';
+      audioOsc2.frequency.value = 110;
+      const gain2 = audioCtx.createGain();
+      gain2.gain.value = 0.06;
+      audioOsc2.connect(gain2);
+      gain2.connect(audioGain);
+      audioOsc2.start();
+
+      // Shimmer
+      const shimmer = audioCtx.createOscillator();
+      shimmer.type = 'sine';
+      shimmer.frequency.value = 220;
+      const shimGain = audioCtx.createGain();
+      shimGain.gain.value = 0.02;
+      shimmer.connect(shimGain);
+      shimGain.connect(audioGain);
+      shimmer.start();
+
+      // LFO for subtle movement
+      audioLfo = audioCtx.createOscillator();
+      audioLfo.type = 'sine';
+      audioLfo.frequency.value = 0.1;
+      const lfoGain = audioCtx.createGain();
+      lfoGain.gain.value = 3;
+      audioLfo.connect(lfoGain);
+      lfoGain.connect(audioOsc1.frequency);
+      audioLfo.start();
+    }
+    // Fade in
+    audioGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    audioGain.gain.setTargetAtTime(0.5, audioCtx.currentTime, 1.0);
+  } else if (audioCtx && audioGain) {
+    // Fade out
+    audioGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    audioGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+  }
+}
+
+function onTap(e) {
+  if (!options.burst) return;
+  if (e.target.closest('#settings') || e.target.closest('#gear')) return;
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -(e.clientY / window.innerHeight) * 2 + 1;
+  spawnBurst(x * BOUNDS.x, y * BOUNDS.y);
+}
+
+function onTapTouch(e) {
+  if (!options.burst) return;
+  if (e.target.closest('#settings') || e.target.closest('#gear')) return;
+  const touch = e.touches[0];
+  const x = (touch.clientX / window.innerWidth) * 2 - 1;
+  const y = -(touch.clientY / window.innerHeight) * 2 + 1;
+  spawnBurst(x * BOUNDS.x, y * BOUNDS.y);
+}
+
+function spawnBurst(x, y) {
+  createParticles(BURST_COUNT, new THREE.Vector3(x, y, 0), true);
+}
+
+function updateParticles(dt) {
+  const geo = particlePoints.geometry;
+  const posAttr = geo.attributes.position;
+  const colAttr = geo.attributes.color;
+  const sizeAttr = geo.attributes.size;
+  let needsRebuild = false;
+
+  // Color shift hue offset
+  const hueShift = options.colorshift ? time * 0.05 : 0;
+
+  for (let i = particleData.length - 1; i >= 0; i--) {
+    const p = particleData[i];
+
+    // Burst particle decay
+    if (p.isBurst) {
+      p.life -= dt * 0.4;
+      if (p.life <= 0) {
+        particleData.splice(i, 1);
+        needsRebuild = true;
+        continue;
+      }
+      p.vel.multiplyScalar(0.97); // drag
+      p.size = (Math.random() * 6 + 4) * p.life;
+    }
+
+    // Organic swirl
+    p.phase += p.orbitSpeed;
+    const swirlX = Math.sin(p.phase + time * 0.2) * 0.15;
+    const swirlY = Math.cos(p.phase * 1.3 + time * 0.15) * 0.15;
+
+    p.pos.x += (p.vel.x + swirlX) * dt * 60;
+    p.pos.y += (p.vel.y + swirlY) * dt * 60;
+    p.pos.z += p.vel.z * dt * 60;
+
+    // Boundary wrap (permanent particles only)
+    if (!p.isBurst) {
+      if (p.pos.x > BOUNDS.x) p.pos.x = -BOUNDS.x;
+      if (p.pos.x < -BOUNDS.x) p.pos.x = BOUNDS.x;
+      if (p.pos.y > BOUNDS.y) p.pos.y = -BOUNDS.y;
+      if (p.pos.y < -BOUNDS.y) p.pos.y = BOUNDS.y;
+      if (p.pos.z > BOUNDS.z) p.pos.z = -BOUNDS.z;
+      if (p.pos.z < -BOUNDS.z) p.pos.z = BOUNDS.z;
+    }
+
+    // Mouse repulsion
+    const dx = p.pos.x - mouseWorld.x;
+    const dy = p.pos.y - mouseWorld.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < MOUSE_INFLUENCE && dist > 0) {
+      const force = (1 - dist / MOUSE_INFLUENCE) * 2;
+      p.pos.x += (dx / dist) * force;
+      p.pos.y += (dy / dist) * force;
+    }
+
+    // Color
+    let r = p.baseColor.r, g = p.baseColor.g, b = p.baseColor.b;
+    if (options.colorshift) {
+      const tmpColor = p.baseColor.clone();
+      tmpColor.offsetHSL(hueShift % 1, 0, 0);
+      r = tmpColor.r; g = tmpColor.g; b = tmpColor.b;
+    }
+
+    const pulse = 0.8 + Math.sin(time * 2 + p.phase) * 0.2;
+    const lifeMult = p.isBurst ? p.life : 1;
+
+    if (i < posAttr.count) {
+      colAttr.array[i * 3] = r * pulse * lifeMult;
+      colAttr.array[i * 3 + 1] = g * pulse * lifeMult;
+      colAttr.array[i * 3 + 2] = b * pulse * lifeMult;
+      posAttr.array[i * 3] = p.pos.x;
+      posAttr.array[i * 3 + 1] = p.pos.y;
+      posAttr.array[i * 3 + 2] = p.pos.z;
+      sizeAttr.array[i] = p.size;
+    }
+  }
+
+  if (needsRebuild) {
+    rebuildParticleGeometry();
+  } else {
+    posAttr.needsUpdate = true;
+    colAttr.needsUpdate = true;
+    sizeAttr.needsUpdate = true;
+  }
+}
+
+function updateLines() {
+  const posAttr = lines.geometry.attributes.position;
+  const colAttr = lines.geometry.attributes.color;
+  let lineIdx = 0;
+  const maxLines = posAttr.array.length / 6;
+  const count = particleData.length;
+
+  for (let i = 0; i < count; i++) {
+    for (let j = i + 1; j < count; j++) {
+      if (lineIdx >= maxLines) break;
+
+      const a = particleData[i];
+      const b = particleData[j];
+      const dx = a.pos.x - b.pos.x;
+      const dy = a.pos.y - b.pos.y;
+      const dz = a.pos.z - b.pos.z;
+      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+      if (dist < CONNECTION_DISTANCE) {
+        const alpha = 1 - dist / CONNECTION_DISTANCE;
+        const idx = lineIdx * 6;
+
+        posAttr.array[idx] = a.pos.x;
+        posAttr.array[idx + 1] = a.pos.y;
+        posAttr.array[idx + 2] = a.pos.z;
+        posAttr.array[idx + 3] = b.pos.x;
+        posAttr.array[idx + 4] = b.pos.y;
+        posAttr.array[idx + 5] = b.pos.z;
+
+        const aLife = a.isBurst ? a.life : 1;
+        const bLife = b.isBurst ? b.life : 1;
+        const lifeMult = Math.min(aLife, bLife);
+
+        const mixR = (a.color.r + b.color.r) * 0.5 * alpha * lifeMult;
+        const mixG = (a.color.g + b.color.g) * 0.5 * alpha * lifeMult;
+        const mixB = (a.color.b + b.color.b) * 0.5 * alpha * lifeMult;
+
+        colAttr.array[idx] = mixR;
+        colAttr.array[idx + 1] = mixG;
+        colAttr.array[idx + 2] = mixB;
+        colAttr.array[idx + 3] = mixR;
+        colAttr.array[idx + 4] = mixG;
+        colAttr.array[idx + 5] = mixB;
+
+        lineIdx++;
+      }
+    }
+  }
+
+  lines.geometry.setDrawRange(0, lineIdx * 2);
+  posAttr.needsUpdate = true;
+  colAttr.needsUpdate = true;
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  mouseWorld.set(mouse.x * BOUNDS.x, mouse.y * BOUNDS.y, 0);
+}
+
+function onTouchMove(e) {
+  if (e.touches.length > 0) {
+    mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+    mouseWorld.set(mouse.x * BOUNDS.x, mouse.y * BOUNDS.y, 0);
+  }
+}
+
+let lastTime = performance.now();
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+  time += dt;
+
+  // Camera orbit
+  camera.position.x = Math.sin(time * 0.05) * 80;
+  camera.position.y = Math.cos(time * 0.07) * 40;
+  camera.lookAt(0, 0, 0);
+
+  // Title fade
+  if (titleMesh) {
+    const targetOpacity = options.title ? 0.25 : 0;
+    const current = titleMesh.material.opacity;
+    titleMesh.material.opacity += (targetOpacity - current) * dt * 3;
+  }
+
+  updateParticles(dt);
+  updateLines();
+
+  renderer.render(scene, camera);
+}
+
+init();
+animate();
+</script>
+</body>
+</html>
