@@ -12,11 +12,16 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Tina needs these at build time - set via Coolify env vars
+# Build-time env vars
 ARG NEXT_PUBLIC_TINA_CLIENT_ID
 ARG TINA_TOKEN
+ARG AGENT_BACKEND_URL=http://daedalus:8100
 ENV NEXT_PUBLIC_TINA_CLIENT_ID=$NEXT_PUBLIC_TINA_CLIENT_ID
 ENV TINA_TOKEN=$TINA_TOKEN
+ENV AGENT_BACKEND_URL=$AGENT_BACKEND_URL
+
+# Ensure node_modules/.bin is in PATH for tinacms
+ENV PATH=/app/node_modules/.bin:$PATH
 
 RUN npm run build
 
@@ -26,6 +31,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV AGENT_BACKEND_URL=http://daedalus:8100
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
