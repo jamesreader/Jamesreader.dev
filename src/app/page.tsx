@@ -3,10 +3,38 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAgent } from '@/context/AgentProvider';
+import type { Intent } from '@/context/AgentProvider';
 import IntentSelector from '@/components/agent/IntentSelector';
-import GuidedExperience from '@/components/agent/GuidedExperience';
+import FloatingGuide from '@/components/agent/FloatingGuide';
+import HeroSection from '@/components/sections/HeroSection';
+import ProjectShowcase from '@/components/sections/ProjectShowcase';
+import InfrastructureSection from '@/components/sections/InfrastructureSection';
+import StorySection from '@/components/sections/StorySection';
+import PhilosophySection from '@/components/sections/PhilosophySection';
+import ConsultingCTA from '@/components/sections/ConsultingCTA';
 
-// ── Default page (before intent selected or dismissed) ─
+// ── Section ordering per intent ────────────────────────
+
+const sectionOrder: Record<Intent, string[]> = {
+  consulting:  ['hero', 'projects', 'infrastructure', 'consulting', 'philosophy'],
+  technical:   ['hero', 'infrastructure', 'projects', 'philosophy', 'consulting'],
+  personal:    ['hero', 'story', 'philosophy', 'projects', 'consulting'],
+  exploring:   ['hero', 'projects', 'story', 'infrastructure', 'philosophy', 'consulting'],
+};
+
+function RenderSection({ id, intent }: { id: string; intent: Intent }) {
+  switch (id) {
+    case 'hero': return <HeroSection intent={intent} />;
+    case 'projects': return <ProjectShowcase intent={intent} />;
+    case 'infrastructure': return <InfrastructureSection />;
+    case 'story': return <StorySection />;
+    case 'philosophy': return <PhilosophySection />;
+    case 'consulting': return <ConsultingCTA />;
+    default: return null;
+  }
+}
+
+// ── Default page (no intent yet) ───────────────────────
 
 function DefaultPage() {
   return (
@@ -17,26 +45,17 @@ function DefaultPage() {
             Builder / IT Leader / AI Engineer
           </p>
         </div>
-
         <h1 className="animate-fade-in-up delay-100 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-charcoal dark:text-cream max-w-4xl">
           I build systems that think, infrastructure that scales, and tools that solve real problems.
         </h1>
-
         <p className="animate-fade-in-up delay-200 mt-8 text-lg md:text-xl text-charcoal/70 dark:text-dark-muted max-w-2xl leading-relaxed font-sans">
-          Twenty years in IT taught me what breaks. Now I build what lasts. From government infrastructure to AI-powered products, I solve problems that matter.
+          Twenty years in IT taught me what breaks. Now I build what lasts.
         </p>
-
         <div className="animate-fade-in-up delay-300 mt-10 flex flex-wrap gap-4">
-          <Link
-            href="/work"
-            className="inline-flex items-center px-6 py-3 bg-charcoal dark:bg-cream text-cream dark:text-charcoal font-sans text-sm font-medium rounded hover:bg-charcoal/90 dark:hover:bg-cream/90 transition-colors"
-          >
+          <Link href="/work" className="inline-flex items-center px-6 py-3 bg-charcoal dark:bg-cream text-cream dark:text-charcoal font-sans text-sm font-medium rounded hover:bg-charcoal/90 dark:hover:bg-cream/90 transition-colors">
             See my work
           </Link>
-          <Link
-            href="/about"
-            className="inline-flex items-center px-6 py-3 border border-charcoal/20 dark:border-dark-border text-charcoal dark:text-cream font-sans text-sm font-medium rounded hover:border-turquoise hover:text-turquoise transition-colors"
-          >
+          <Link href="/about" className="inline-flex items-center px-6 py-3 border border-charcoal/20 dark:border-dark-border text-charcoal dark:text-cream font-sans text-sm font-medium rounded hover:border-turquoise hover:text-turquoise transition-colors">
             About me
           </Link>
         </div>
@@ -66,12 +85,25 @@ export default function Home() {
           </motion.div>
         ) : (
           <motion.div
-            key={`guided-${intent}`}
+            key={`flow-${intent}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
           >
-            <GuidedExperience intent={intent} />
+            {/* Content flows naturally — all sections rendered, scrollable */}
+            {sectionOrder[intent].map((sectionId, index) => (
+              <motion.div
+                key={sectionId}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.06, ease: 'easeOut' as const }}
+              >
+                <RenderSection id={sectionId} intent={intent} />
+              </motion.div>
+            ))}
+
+            {/* Agent overlay — floats on top, annotates, guides */}
+            <FloatingGuide intent={intent} sections={sectionOrder[intent]} />
           </motion.div>
         )}
       </AnimatePresence>
