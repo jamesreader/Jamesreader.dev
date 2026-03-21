@@ -133,6 +133,38 @@ html.theme-transition *::after {
   background: #2d333b;
 }
 
+/* Agent message markdown styles */
+.prose-agent p {
+  @apply mb-2 last:mb-0;
+}
+.prose-agent strong {
+  @apply font-semibold;
+}
+.prose-agent a {
+  @apply text-turquoise hover:underline;
+}
+.prose-agent ul, .prose-agent ol {
+  @apply mb-2 pl-4;
+}
+.prose-agent li {
+  @apply mb-1;
+}
+.prose-agent code {
+  @apply text-xs bg-stone/50 dark:bg-dark-border/50 px-1 py-0.5 rounded;
+}
+.prose-agent pre {
+  @apply bg-charcoal dark:bg-dark-surface text-cream text-xs p-3 rounded-lg overflow-x-auto my-2;
+}
+.prose-agent pre code {
+  @apply bg-transparent p-0;
+}
+.prose-agent h1, .prose-agent h2, .prose-agent h3, .prose-agent h4 {
+  @apply font-semibold text-charcoal dark:text-cream mt-3 mb-1;
+}
+.prose-agent blockquote {
+  @apply border-l-2 border-turquoise/50 pl-3 italic text-charcoal/70 dark:text-dark-muted my-2;
+}
+
 /* Delay utility classes for staggered animations */
 .delay-100 { animation-delay: 0.1s; opacity: 0; }
 .delay-200 { animation-delay: 0.2s; opacity: 0; }

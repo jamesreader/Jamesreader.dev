@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import IntentSelector from '@/components/agent/IntentSelector';
 
 const featuredProjects = [
   {
@@ -27,6 +28,9 @@ const featuredProjects = [
 export default function Home() {
   return (
     <>
+      {/* Agent Intent Selector — first-time visitors */}
+      <IntentSelector />
+
       {/* Hero */}
       <section className="ambient-gradient min-h-[85vh] flex items-center">
         <div className="max-w-5xl mx-auto px-6 py-20">
