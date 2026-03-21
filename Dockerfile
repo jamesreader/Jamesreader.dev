@@ -4,7 +4,7 @@ FROM node:20-alpine AS base
 FROM base AS builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 COPY . .
 
 ARG AGENT_BACKEND_URL=http://daedalus:8100
