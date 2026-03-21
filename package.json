@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "tinacms dev -c \"next dev\" --local",
-    "build": "node node_modules/next/dist/bin/next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
