@@ -1,37 +1,97 @@
+'use client';
+
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useAgent } from '@/context/AgentProvider';
+import type { Intent } from '@/context/AgentProvider';
 import IntentSelector from '@/components/agent/IntentSelector';
+import HeroSection from '@/components/sections/HeroSection';
+import ProjectShowcase from '@/components/sections/ProjectShowcase';
+import InfrastructureSection from '@/components/sections/InfrastructureSection';
+import StorySection from '@/components/sections/StorySection';
+import PhilosophySection from '@/components/sections/PhilosophySection';
+import ConsultingCTA from '@/components/sections/ConsultingCTA';
+import GuideLayer from '@/components/sections/GuideLayer';
 
-const featuredProjects = [
-  {
-    title: 'Meridian Money',
-    category: 'Fintech',
-    description: 'A personal finance app that makes envelope budgeting intuitive. Built for people who want control over their money without the complexity.',
-    href: '/work#meridian-money',
-    tags: ['Next.js', 'React', 'Stripe', 'AI'],
-  },
-  {
-    title: 'SMIS AI Tool',
-    category: 'Enterprise AI',
-    description: 'Bid intelligence platform for forestry and construction. Turns thousands of federal contract listings into actionable opportunities.',
-    href: '/work#smis',
-    tags: ['Python', 'LLMs', 'RAG', 'SAM.gov'],
-  },
-  {
-    title: 'Local AI Infrastructure',
-    category: 'Infrastructure',
-    description: 'Running production LLMs on an NVIDIA DGX Spark with 128GB unified memory. vLLM, custom pipelines, zero cloud dependency.',
-    href: '/work#local-ai',
-    tags: ['NVIDIA DGX', 'vLLM', 'Docker', 'k3s'],
-  },
-];
+// ── Section ordering per intent ────────────────────────
 
-export default function Home() {
+type SectionId = 'hero' | 'projects' | 'infrastructure' | 'story' | 'philosophy' | 'consulting' | 'blog';
+
+const sectionOrder: Record<Intent, SectionId[]> = {
+  consulting: ['hero', 'projects', 'consulting', 'infrastructure', 'philosophy'],
+  technical: ['hero', 'infrastructure', 'projects', 'philosophy', 'consulting'],
+  personal: ['hero', 'story', 'philosophy', 'projects', 'consulting'],
+  exploring: ['hero', 'projects', 'story', 'infrastructure', 'philosophy', 'consulting'],
+};
+
+// ── Section components map ─────────────────────────────
+
+function SectionRenderer({ sectionId, intent }: { sectionId: SectionId; intent: Intent }) {
+  switch (sectionId) {
+    case 'hero':
+      return <HeroSection intent={intent} />;
+    case 'projects':
+      return <ProjectShowcase intent={intent} />;
+    case 'infrastructure':
+      return <InfrastructureSection />;
+    case 'story':
+      return <StorySection />;
+    case 'philosophy':
+      return <PhilosophySection />;
+    case 'consulting':
+      return <ConsultingCTA />;
+    case 'blog':
+      return <BlogPreview />;
+    default:
+      return null;
+  }
+}
+
+// ── Blog preview (kept from original) ──────────────────
+
+function BlogPreview() {
+  return (
+    <section className="py-20 md:py-28">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-2">
+              Writing
+            </p>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-charcoal dark:text-cream">
+              From the blog
+            </h2>
+          </div>
+          <Link href="/blog" className="hidden sm:inline-flex text-sm text-charcoal/60 dark:text-dark-muted hover:text-turquoise transition-colors">
+            All posts →
+          </Link>
+        </div>
+
+        <div className="border border-stone-dark/20 dark:border-dark-border/30 rounded-lg p-8 md:p-12 bg-white dark:bg-dark-surface">
+          <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-3">
+            Coming Soon
+          </p>
+          <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal dark:text-cream mb-4">
+            Running Production LLMs on a DGX Spark
+          </h3>
+          <p className="font-sans text-charcoal/60 dark:text-dark-muted leading-relaxed max-w-2xl">
+            What it actually takes to run large language models locally. Hardware choices, memory architecture,
+            inference optimization, and why 128GB of unified memory changes the game.
+          </p>
+          <p className="mt-6 text-sm text-charcoal/40 dark:text-dark-muted">
+            First post coming soon. Stay tuned.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── Default (no intent) static page ────────────────────
+
+function DefaultPage() {
   return (
     <>
-      {/* Agent Intent Selector — first-time visitors */}
-      <IntentSelector />
-
-      {/* Hero */}
       <section className="ambient-gradient min-h-[85vh] flex items-center">
         <div className="max-w-5xl mx-auto px-6 py-20">
           <div className="animate-fade-in-up">
@@ -64,87 +124,55 @@ export default function Home() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
 
-      {/* Featured Work */}
-      <section className="bg-cream-dark/50 dark:bg-dark-surface/50 py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-2">
-                Selected Work
-              </p>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-charcoal dark:text-cream">
-                Things I&apos;ve built
-              </h2>
-            </div>
-            <Link href="/work" className="hidden sm:inline-flex text-sm text-charcoal/60 dark:text-dark-muted hover:text-turquoise transition-colors">
-              View all &rarr;
-            </Link>
-          </div>
+// ── Main page ──────────────────────────────────────────
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredProjects.map((project) => (
-              <Link
-                key={project.title}
-                href={project.href}
-                className="group bg-white dark:bg-dark-surface border border-stone-dark/20 dark:border-dark-border/30 rounded-lg p-6 hover:border-turquoise/40 transition-all duration-300 hover:shadow-lg hover:shadow-turquoise/5"
+export default function Home() {
+  const { intent } = useAgent();
+
+  return (
+    <>
+      <IntentSelector />
+
+      <AnimatePresence mode="wait">
+        {!intent ? (
+          <motion.div
+            key="default"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DefaultPage />
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`intent-${intent}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            {sectionOrder[intent].map((sectionId, index) => (
+              <motion.div
+                key={sectionId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: index * 0.08,
+                  ease: 'easeOut',
+                }}
               >
-                <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-3">
-                  {project.category}
-                </p>
-                <h3 className="font-serif text-xl font-bold text-charcoal dark:text-cream mb-3 group-hover:text-turquoise transition-colors">
-                  {project.title}
-                </h3>
-                <p className="font-sans text-sm text-charcoal/60 dark:text-dark-muted leading-relaxed mb-4">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span key={tag} className="text-xs font-sans px-2 py-1 bg-stone/50 dark:bg-dark-border/30 text-charcoal/60 dark:text-dark-muted rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </Link>
+                <SectionRenderer sectionId={sectionId} intent={intent} />
+              </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Latest from the blog (placeholder) */}
-      <section className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-2">
-                Writing
-              </p>
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-charcoal dark:text-cream">
-                From the blog
-              </h2>
-            </div>
-            <Link href="/blog" className="hidden sm:inline-flex text-sm text-charcoal/60 dark:text-dark-muted hover:text-turquoise transition-colors">
-              All posts &rarr;
-            </Link>
-          </div>
-
-          <div className="border border-stone-dark/20 dark:border-dark-border/30 rounded-lg p-8 md:p-12 bg-white dark:bg-dark-surface">
-            <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-3">
-              Coming Soon
-            </p>
-            <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal dark:text-cream mb-4">
-              Running Production LLMs on a DGX Spark
-            </h3>
-            <p className="font-sans text-charcoal/60 dark:text-dark-muted leading-relaxed max-w-2xl">
-              What it actually takes to run large language models locally. Hardware choices, memory architecture, 
-              inference optimization, and why 128GB of unified memory changes the game.
-            </p>
-            <p className="mt-6 text-sm text-charcoal/40 dark:text-dark-muted">
-              First post coming soon. Stay tuned.
-            </p>
-          </div>
-        </div>
-      </section>
+            <GuideLayer intent={intent} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

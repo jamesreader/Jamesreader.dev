@@ -1,12 +1,12 @@
-import type { Metadata } from 'next';
 import './globals.css';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import { AgentProvider } from '@/context/AgentProvider';
 import ConversationTrigger from '@/components/agent/ConversationTrigger';
 import ConversationThread from '@/components/agent/ConversationThread';
+import LayoutShell from '@/components/LayoutShell';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: {
     default: 'James Reader | Builder, IT Leader, AI Engineer',
     template: '%s | James Reader',
@@ -54,11 +54,13 @@ export default function RootLayout({
       </head>
       <body className="bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text antialiased">
         <AgentProvider>
-          <Nav />
-          <main className="min-h-screen pt-16">
-            {children}
-          </main>
-          <Footer />
+          <LayoutShell>
+            <Nav />
+            <main className="min-h-screen pt-16">
+              {children}
+            </main>
+            <Footer />
+          </LayoutShell>
           <ConversationTrigger />
           <ConversationThread />
         </AgentProvider>
