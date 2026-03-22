@@ -118,7 +118,7 @@ export default function InfrastructureSection() {
         >
           <p className="font-sans text-sm text-charcoal/70 dark:text-dark-muted leading-relaxed">
             <span className="font-semibold text-turquoise">Meta:</span> The AI agent guiding this site runs on the Daedalus DGX Spark described above.
-            Your conversation is being processed by a self-hosted Qwen model with RAG retrieval against a local pgvector database.
+            Your conversation is being processed by a self-hosted model with RAG retrieval against a local pgvector database.
             The medium is the message — you&apos;re experiencing what I build.
           </p>
         </motion.div>
