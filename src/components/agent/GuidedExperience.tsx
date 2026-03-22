@@ -6,6 +6,7 @@ import type { Intent } from '@/context/AgentProvider';
 import { useAgent } from '@/context/AgentProvider';
 import AgentNarration from './AgentNarration';
 import TransitionPrompt, { type TransitionOption } from './TransitionPrompt';
+import JobEvaluator from './JobEvaluator';
 import HeroSection from '@/components/sections/HeroSection';
 import ProjectShowcase from '@/components/sections/ProjectShowcase';
 import InfrastructureSection from '@/components/sections/InfrastructureSection';
@@ -15,7 +16,7 @@ import ConsultingCTA from '@/components/sections/ConsultingCTA';
 
 // ── Flow definitions per intent ────────────────────────
 
-type StepType = 'narration' | 'section' | 'prompt';
+type StepType = 'narration' | 'section' | 'prompt' | 'evaluator';
 
 interface NarrationStep {
   type: 'narration';
@@ -34,7 +35,11 @@ interface PromptStep {
   options: (TransitionOption & { nextSteps: string })[];
 }
 
-type FlowStep = NarrationStep | SectionStep | PromptStep;
+interface EvaluatorStep {
+  type: 'evaluator';
+}
+
+type FlowStep = NarrationStep | SectionStep | PromptStep | EvaluatorStep;
 
 // Each intent has a branching flow
 interface FlowDefinition {
@@ -287,9 +292,10 @@ const flows: Record<Intent, FlowDefinition> = {
     initial: [
       { type: 'section', id: 'hero', component: 'hero' },
       { type: 'narration', message: "Paste or upload a job description and I'll give you an honest assessment of whether James is a good fit — no sales pitch, just the truth." },
+      { type: 'evaluator' },
       {
         type: 'prompt',
-        question: 'After the evaluation, want to explore more?',
+        question: 'Want to explore more?',
         options: [
           { id: 'see-work', icon: '🔨', label: 'See the projects', description: 'What James has actually built.', nextSteps: 'projects' },
           { id: 'the-stack', icon: '⚙️', label: 'The infrastructure', description: 'Self-hosted AI and hardware.', nextSteps: 'infra' },
@@ -464,6 +470,19 @@ export default function GuidedExperience({ intent }: { intent: Intent }) {
                 transition={{ duration: 0.5, ease: 'easeOut' as const }}
               >
                 <RenderSection componentName={step.component} intent={intent} />
+              </motion.div>
+            );
+          }
+
+          if (step.type === 'evaluator') {
+            return (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' as const }}
+              >
+                <JobEvaluator />
               </motion.div>
             );
           }
