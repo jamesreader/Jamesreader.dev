@@ -3,62 +3,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useAgent } from '@/context/AgentProvider';
-import type { Intent } from '@/context/AgentProvider';
 import IntentSelector from '@/components/agent/IntentSelector';
-import FloatingGuide from '@/components/agent/FloatingGuide';
-import HeroSection from '@/components/sections/HeroSection';
-import ProjectShowcase from '@/components/sections/ProjectShowcase';
-import InfrastructureSection from '@/components/sections/InfrastructureSection';
-import StorySection from '@/components/sections/StorySection';
-import PhilosophySection from '@/components/sections/PhilosophySection';
-import ConsultingCTA from '@/components/sections/ConsultingCTA';
+import StageView from '@/components/stage/StageView';
 
-// ── Section ordering per intent ────────────────────────
-
-const sectionOrder: Record<Intent, string[]> = {
-  consulting:  ['hero', 'projects', 'infrastructure', 'consulting', 'philosophy'],
-  technical:   ['hero', 'infrastructure', 'projects', 'philosophy', 'consulting'],
-  personal:    ['hero', 'story', 'philosophy', 'projects', 'consulting'],
-  exploring:   ['hero', 'projects', 'story', 'infrastructure', 'philosophy', 'consulting'],
-};
-
-function RenderSection({ id, intent }: { id: string; intent: Intent }) {
-  switch (id) {
-    case 'hero': return <HeroSection intent={intent} />;
-    case 'projects': return <ProjectShowcase intent={intent} />;
-    case 'infrastructure': return <InfrastructureSection />;
-    case 'story': return <StorySection />;
-    case 'philosophy': return <PhilosophySection />;
-    case 'consulting': return <ConsultingCTA />;
-    default: return null;
-  }
-}
-
-// ── Section entrance animation ─────────────────────────
-
-const sectionVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 40,
-    filter: 'blur(4px)',
-  },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: {
-      duration: 0.6,
-      delay: i * 0.12,
-      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
-    },
-  }),
-};
-
-// ── Default page (no intent yet) ───────────────────────
+// ── Default page (no intent yet — the empty stage) ────
 
 function DefaultPage() {
   return (
-    <section className="ambient-gradient min-h-[85vh] flex items-center">
+    <section className="min-h-[85vh] flex items-center relative overflow-hidden">
+      {/* Subtle ambient gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-cream via-cream to-turquoise/3 
+        dark:from-dark-bg dark:via-dark-bg dark:to-turquoise/5 -z-10" />
+      
       <div className="max-w-5xl mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -117,32 +73,19 @@ export default function Home() {
           <motion.div
             key="default"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, scale: 0.97, filter: 'blur(8px)' }}
+            transition={{ duration: 0.5 }}
           >
             <DefaultPage />
           </motion.div>
         ) : (
           <motion.div
-            key={`flow-${intent}`}
+            key="stage"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
           >
-            {sectionOrder[intent].map((sectionId, index) => (
-              <motion.div
-                key={sectionId}
-                custom={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-80px' }}
-                variants={sectionVariants}
-              >
-                <RenderSection id={sectionId} intent={intent} />
-              </motion.div>
-            ))}
-
-            <FloatingGuide />
+            <StageView />
           </motion.div>
         )}
       </AnimatePresence>
