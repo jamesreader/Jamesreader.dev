@@ -103,7 +103,7 @@ export default function Home() {
             ))}
 
             {/* Agent overlay — floats on top, annotates, guides */}
-            <FloatingGuide intent={intent} sections={sectionOrder[intent]} />
+            <FloatingGuide />
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,314 +1,246 @@
-'use client';
+"use client"
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { Intent } from '@/context/AgentProvider';
-import { useAgent } from '@/context/AgentProvider';
-
-// ── Annotation data ────────────────────────────────────
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useAgentContext } from '@/context/AgentProvider'
 
 interface Annotation {
-  id: string;
-  sectionId: string;          // which section triggers this
-  triggerPercent: number;      // % scrolled through that section (0-1)
-  content: string;
-  intents: Intent[];
-  cta?: { label: string; action: 'open-chat' | 'scroll-to'; target?: string };
+  id: string
+  content: string
+  section: string
+  cta?: {
+    text: string
+    action: () => void
+  }
 }
 
-const allAnnotations: Annotation[] = [
-  {
-    id: 'welcome-projects',
-    sectionId: 'projects',
-    triggerPercent: 0.1,
-    content: "Each of these started as a real business problem, not a portfolio piece. Want to hear the story behind any of them?",
-    intents: ['consulting', 'exploring'],
-    cta: { label: 'Ask Reader', action: 'open-chat' },
-  },
-  {
-    id: 'smis-growth',
-    sectionId: 'projects',
-    triggerPercent: 0.4,
-    content: "The SMIS tool started as a $5K build. It's growing into a full AI platform — that's what happens when you solve a real pain point.",
-    intents: ['consulting', 'technical'],
-  },
-  {
-    id: 'infra-meta',
-    sectionId: 'infrastructure',
-    triggerPercent: 0.15,
-    content: "You're experiencing this stack right now. The AI behind this site runs on the same Daedalus hardware described here.",
-    intents: ['technical', 'exploring', 'consulting'],
-  },
-  {
-    id: 'infra-cost',
-    sectionId: 'infrastructure',
-    triggerPercent: 0.6,
-    content: "Cloud API costs for this level of inference: $2,000+/month. Self-hosted on Daedalus: electricity. The economics are transformative.",
-    intents: ['consulting', 'technical'],
-  },
-  {
-    id: 'story-pivot',
-    sectionId: 'story',
-    triggerPercent: 0.3,
-    content: "The jump from IT Director to AI builder wasn't a career change — it was a natural evolution. The infrastructure knowledge IS the competitive advantage.",
-    intents: ['personal', 'consulting', 'exploring'],
-  },
-  {
-    id: 'philosophy-security',
-    sectionId: 'philosophy',
-    triggerPercent: 0.2,
-    content: "The security-first approach isn't abstract — it comes from running government IT where a breach means real consequences for real people.",
-    intents: ['technical', 'personal'],
-  },
-  {
-    id: 'consulting-pitch',
-    sectionId: 'consulting',
-    triggerPercent: 0.1,
-    content: "Curious about working together? I can answer questions about James's process, availability, and approach.",
-    intents: ['consulting', 'exploring'],
-    cta: { label: 'Ask me anything', action: 'open-chat' },
-  },
-  {
-    id: 'hero-explore',
-    sectionId: 'hero',
-    triggerPercent: 0.8,
-    content: "Scroll to explore, or ask me about anything that catches your eye. I know James's work inside and out.",
-    intents: ['exploring'],
-    cta: { label: 'Talk to Reader', action: 'open-chat' },
-  },
-];
+// Section navigation dots
+const SECTIONS = [
+  { id: 'hero', label: 'Top' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'infrastructure', label: 'Infrastructure' },
+  { id: 'story', label: 'Story' },
+  { id: 'philosophy', label: 'Philosophy' },
+  { id: 'consulting', label: 'Consulting' },
+]
 
-// ── Section nav ────────────────────────────────────────
+export default function FloatingGuide() {
+  const { intent } = useAgentContext()
+  const [currentSection, setCurrentSection] = useState('hero')
+  const [showSectionNav, setShowSectionNav] = useState(false)
+  const [annotation, setAnnotation] = useState<Annotation | null>(null)
+  const [isLoadingAnnotation, setIsLoadingAnnotation] = useState(false)
 
-interface SectionInfo {
-  id: string;
-  label: string;
-  icon: string;
-}
-
-const sectionMeta: Record<string, SectionInfo> = {
-  hero: { id: 'hero', label: 'Intro', icon: '🏠' },
-  projects: { id: 'projects', label: 'Projects', icon: '🔨' },
-  infrastructure: { id: 'infrastructure', label: 'Infrastructure', icon: '⚙️' },
-  story: { id: 'story', label: 'Story', icon: '📖' },
-  philosophy: { id: 'philosophy', label: 'Philosophy', icon: '💡' },
-  consulting: { id: 'consulting', label: 'Contact', icon: '🤝' },
-};
-
-// ── Component ──────────────────────────────────────────
-
-interface FloatingGuideProps {
-  intent: Intent;
-  sections: string[];
-}
-
-export default function FloatingGuide({ intent, sections }: FloatingGuideProps) {
-  const { toggleOpen } = useAgent();
-  const [activeAnnotation, setActiveAnnotation] = useState<Annotation | null>(null);
-  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
-  const [shownIds, setShownIds] = useState<Set<string>>(new Set());
-  const [currentSection, setCurrentSection] = useState<string>('hero');
-  const [showNav, setShowNav] = useState(false);
-  const dismissTimerRef = useRef<ReturnType<typeof setTimeout>>();
-
-  // Get annotations for current intent
-  const intentAnnotations = allAnnotations.filter(a => a.intents.includes(intent));
-
-  // Track scroll position and detect which section is in view
+  // Track scroll position and current section
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const viewportH = window.innerHeight;
-
+      const scrollY = window.scrollY
+      const windowHeight = window.innerHeight
+      
       // Show section nav after scrolling past hero
-      setShowNav(scrollY > viewportH * 0.5);
+      setShowSectionNav(scrollY > windowHeight * 0.3)
 
-      // Find which section is most in view
-      for (const sectionId of [...sections].reverse()) {
-        const el = document.getElementById(sectionId);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top < viewportH * 0.6) {
-          setCurrentSection(sectionId);
-
-          // Check if we should trigger an annotation
-          const sectionProgress = Math.max(0, Math.min(1, -rect.top / (rect.height - viewportH)));
-
-          for (const ann of intentAnnotations) {
-            if (
-              ann.sectionId === sectionId &&
-              sectionProgress >= ann.triggerPercent &&
-              !dismissedIds.has(ann.id) &&
-              !shownIds.has(ann.id) &&
-              !activeAnnotation
-            ) {
-              setActiveAnnotation(ann);
-              setShownIds(prev => new Set([...prev, ann.id]));
-            }
+      // Determine current section based on scroll position
+      const sections = SECTIONS.slice(1) // Skip 'hero'
+      let current = 'hero'
+      
+      for (const section of sections) {
+        const element = document.getElementById(section.id)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= windowHeight * 0.4) {
+            current = section.id
           }
-          break;
         }
       }
-    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [sections, intentAnnotations, dismissedIds, shownIds, activeAnnotation]);
-
-  // Auto-dismiss annotation after 12 seconds
-  useEffect(() => {
-    if (!activeAnnotation) return;
-    dismissTimerRef.current = setTimeout(() => {
-      setDismissedIds(prev => new Set([...prev, activeAnnotation.id]));
-      setActiveAnnotation(null);
-    }, 12000);
-    return () => clearTimeout(dismissTimerRef.current);
-  }, [activeAnnotation]);
-
-  const dismissAnnotation = useCallback(() => {
-    if (activeAnnotation) {
-      setDismissedIds(prev => new Set([...prev, activeAnnotation.id]));
-      setActiveAnnotation(null);
+      if (current !== currentSection) {
+        setCurrentSection(current)
+        // Trigger annotation when entering a new section
+        if (current !== 'hero') {
+          requestAnnotation(current, scrollY)
+        }
+      }
     }
-  }, [activeAnnotation]);
 
-  const handleCta = useCallback((cta: Annotation['cta']) => {
-    dismissAnnotation();
-    if (cta?.action === 'open-chat') {
-      toggleOpen();
-    } else if (cta?.action === 'scroll-to' && cta.target) {
-      document.getElementById(cta.target)?.scrollIntoView({ behavior: 'smooth' });
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Initial check
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [currentSection])
+
+  const requestAnnotation = async (sectionId: string, scrollY: number) => {
+    if (isLoadingAnnotation) return
+
+    try {
+      setIsLoadingAnnotation(true)
+      
+      // Calculate scroll depth within the section
+      const sectionElement = document.getElementById(sectionId)
+      let scrollDepth = 0
+      if (sectionElement) {
+        const rect = sectionElement.getBoundingClientRect()
+        const sectionTop = scrollY + rect.top
+        const sectionHeight = rect.height
+        const sectionScroll = Math.max(0, scrollY - sectionTop)
+        scrollDepth = Math.min(1, sectionScroll / sectionHeight)
+      }
+
+      const response = await fetch('/api/annotate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          section_id: sectionId,
+          intent,
+          scroll_depth: scrollDepth,
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.annotation) {
+          setAnnotation({
+            id: `${sectionId}-${Date.now()}`,
+            content: data.annotation,
+            section: sectionId,
+            cta: {
+              text: "Ask Reader",
+              action: () => {
+                // Open chat with context
+                const chatButton = document.querySelector('[data-chat-toggle]') as HTMLElement
+                if (chatButton) {
+                  chatButton.click()
+                }
+                // TODO: Pre-fill chat input with section-specific question
+              }
+            }
+          })
+          
+          // Auto-dismiss after 8 seconds
+          setTimeout(() => {
+            setAnnotation(prev => prev?.id === `${sectionId}-${Date.now()}` ? null : prev)
+          }, 8000)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch annotation:', error)
+    } finally {
+      setIsLoadingAnnotation(false)
     }
-  }, [dismissAnnotation, toggleOpen]);
+  }
 
-  const scrollToSection = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    setShowNav(false);
-  }, []);
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   return (
     <>
-      {/* ── Floating section nav (left side) ──────────── */}
+      {/* Section Navigation - Left side */}
       <AnimatePresence>
-        {showNav && (
-          <motion.nav
+        {showSectionNav && (
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed left-4 top-1/2 -translate-y-1/2 z-30 hidden lg:flex flex-col gap-1.5"
+            className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
           >
-            {sections.filter(s => s !== 'hero').map((sectionId) => {
-              const meta = sectionMeta[sectionId];
-              if (!meta) return null;
-              const isActive = currentSection === sectionId;
-              return (
+            <nav className="flex flex-col gap-3">
+              {SECTIONS.map((section) => (
                 <button
-                  key={sectionId}
-                  onClick={() => scrollToSection(sectionId)}
-                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
-                    isActive
-                      ? 'bg-turquoise/10 text-turquoise'
-                      : 'text-charcoal/30 dark:text-dark-muted/40 hover:text-charcoal/60 dark:hover:text-dark-muted/70 hover:bg-stone/30 dark:hover:bg-dark-surface/30'
-                  }`}
-                  title={meta.label}
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`
+                    group relative w-3 h-3 rounded-full transition-all duration-200
+                    ${currentSection === section.id
+                      ? 'bg-turquoise-400 scale-125'
+                      : 'bg-charcoal-200 hover:bg-turquoise-300'
+                    }
+                  `}
+                  title={section.label}
                 >
-                  <span className="text-sm">{meta.icon}</span>
-                  <span className={`text-xs font-sans font-medium transition-all duration-200 overflow-hidden ${
-                    isActive ? 'max-w-[80px] opacity-100' : 'max-w-0 opacity-0 group-hover:max-w-[80px] group-hover:opacity-100'
-                  }`}>
-                    {meta.label}
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap
+                    text-sm text-charcoal-600 opacity-0 group-hover:opacity-100
+                    transition-opacity duration-200 pointer-events-none">
+                    {section.label}
                   </span>
                 </button>
-              );
-            })}
-          </motion.nav>
+              ))}
+            </nav>
+          </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Floating annotation (right side desktop, bottom mobile) ── */}
+      {/* Annotations - Right side desktop, bottom mobile */}
       <AnimatePresence>
-        {activeAnnotation && (
+        {annotation && (
           <>
-            {/* Desktop: right side */}
+            {/* Desktop annotation */}
             <motion.div
-              key={`desktop-${activeAnnotation.id}`}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20, scale: 0.97 }}
-              transition={{ duration: 0.35, ease: 'easeOut' as const }}
-              className="fixed right-6 top-1/2 -translate-y-1/2 z-30 max-w-[280px] hidden lg:block"
+              key={annotation.id}
+              initial={{ opacity: 0, x: 20, scale: 0.95 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 20, scale: 0.95 }}
+              className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block max-w-xs"
             >
-              <div className="bg-white/92 dark:bg-dark-surface/92 backdrop-blur-xl rounded-2xl border border-stone-dark/15 dark:border-dark-border/30 shadow-xl shadow-black/5 overflow-hidden">
-                {/* Accent top */}
-                <div className="h-0.5 bg-gradient-to-r from-turquoise/60 to-turquoise/0" />
-
-                <div className="p-5">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-7 h-7 rounded-full bg-turquoise/12 flex items-center justify-center flex-shrink-0">
-                      <span className="text-turquoise text-xs font-bold font-serif">R</span>
-                    </div>
-                    <p className="font-sans text-[13px] text-charcoal/75 dark:text-dark-text/85 leading-relaxed pt-0.5">
-                      {activeAnnotation.content}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between ml-10">
-                    {activeAnnotation.cta ? (
-                      <button
-                        onClick={() => handleCta(activeAnnotation.cta)}
-                        className="font-sans text-xs text-turquoise hover:text-turquoise-dim transition-colors font-medium"
-                      >
-                        {activeAnnotation.cta.label} →
-                      </button>
-                    ) : (
-                      <div />
-                    )}
-                    <button
-                      onClick={dismissAnnotation}
-                      className="font-sans text-[10px] text-charcoal/25 dark:text-dark-muted/35 hover:text-charcoal/50 dark:hover:text-dark-muted/60 transition-colors"
-                    >
-                      dismiss
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Mobile: bottom toast */}
-            <motion.div
-              key={`mobile-${activeAnnotation.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3 }}
-              className="fixed bottom-20 left-3 right-3 z-30 lg:hidden"
-            >
-              <div className="bg-white/95 dark:bg-dark-surface/95 backdrop-blur-xl rounded-xl border border-stone-dark/15 dark:border-dark-border/30 shadow-lg p-4">
+              <div className="bg-cream-50 border border-turquoise-200 rounded-lg p-4 shadow-lg">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-turquoise/12 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-turquoise text-[10px] font-bold font-serif">R</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-sans text-sm text-charcoal/75 dark:text-dark-text/85 leading-relaxed">
-                      {activeAnnotation.content}
+                  <div className="w-2 h-2 rounded-full bg-turquoise-400 mt-2 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm text-charcoal-700 leading-relaxed mb-3">
+                      {annotation.content}
                     </p>
-                    {activeAnnotation.cta && (
+                    {annotation.cta && (
                       <button
-                        onClick={() => handleCta(activeAnnotation.cta)}
-                        className="font-sans text-xs text-turquoise mt-2 font-medium"
+                        onClick={annotation.cta.action}
+                        className="text-xs text-turquoise-600 hover:text-turquoise-700 
+                          font-medium transition-colors"
                       >
-                        {activeAnnotation.cta.label} →
+                        {annotation.cta.text} →
                       </button>
                     )}
                   </div>
                   <button
-                    onClick={dismissAnnotation}
-                    className="p-1 text-charcoal/25 dark:text-dark-muted/35"
+                    onClick={() => setAnnotation(null)}
+                    className="text-charcoal-400 hover:text-charcoal-600 text-sm"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    ×
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Mobile annotation - bottom toast */}
+            <motion.div
+              key={`mobile-${annotation.id}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="fixed bottom-20 left-4 right-4 z-40 lg:hidden"
+            >
+              <div className="bg-cream-50 border border-turquoise-200 rounded-lg p-4 shadow-lg">
+                <div className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-turquoise-400 mt-1 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm text-charcoal-700 leading-relaxed mb-2">
+                      {annotation.content}
+                    </p>
+                    {annotation.cta && (
+                      <button
+                        onClick={annotation.cta.action}
+                        className="text-xs text-turquoise-600 hover:text-turquoise-700 
+                          font-medium transition-colors"
+                      >
+                        {annotation.cta.text} →
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setAnnotation(null)}
+                    className="text-charcoal-400 hover:text-charcoal-600 text-sm"
+                  >
+                    ×
                   </button>
                 </div>
               </div>
@@ -317,5 +249,5 @@ export default function FloatingGuide({ intent, sections }: FloatingGuideProps) 
         )}
       </AnimatePresence>
     </>
-  );
+  )
 }

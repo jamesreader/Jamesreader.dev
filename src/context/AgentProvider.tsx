@@ -13,6 +13,11 @@ export interface Message {
   timestamp: number;
 }
 
+export interface PageDirective {
+  type: string;
+  target: string;
+}
+
 interface AgentState {
   intent: Intent | null;
   sessionId: string | null;
@@ -34,6 +39,7 @@ interface AgentContextValue extends AgentState {
   setWelcomeMessage: (msg: string) => void;
   clearSession: () => void;
   checkHealth: () => Promise<boolean>;
+  executePageAction: (directive: PageDirective) => void;
 }
 
 // ── Storage Keys ───────────────────────────────────────
@@ -177,6 +183,58 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Execute page actions from agent directives
+  const executePageAction = useCallback((directive: PageDirective) => {
+    try {
+      switch (directive.type) {
+        case 'scroll':
+          const element = document.getElementById(directive.target);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          break;
+
+        case 'highlight':
+          const highlightEl = document.getElementById(directive.target);
+          if (highlightEl) {
+            // Add pulse animation class
+            highlightEl.classList.add('animate-pulse');
+            highlightEl.style.outline = '3px solid rgba(45, 212, 191, 0.5)';
+            setTimeout(() => {
+              highlightEl.classList.remove('animate-pulse');
+              highlightEl.style.outline = '';
+            }, 2000);
+          }
+          break;
+
+        case 'show-project':
+          // Scroll to projects section first
+          const projectsSection = document.getElementById('projects');
+          if (projectsSection) {
+            projectsSection.scrollIntoView({ behavior: 'smooth' });
+          }
+          // Then highlight specific project
+          setTimeout(() => {
+            const projectCard = document.querySelector(`[data-project="${directive.target}"]`);
+            if (projectCard) {
+              (projectCard as HTMLElement).style.transform = 'scale(1.02)';
+              (projectCard as HTMLElement).style.boxShadow = '0 8px 25px rgba(45, 212, 191, 0.3)';
+              setTimeout(() => {
+                (projectCard as HTMLElement).style.transform = '';
+                (projectCard as HTMLElement).style.boxShadow = '';
+              }, 3000);
+            }
+          }, 1000);
+          break;
+
+        default:
+          console.log('Unknown directive:', directive);
+      }
+    } catch (error) {
+      console.error('Error executing page action:', error);
+    }
+  }, []);
+
   // Health check on mount & every 60s
   useEffect(() => {
     checkHealth();
@@ -202,6 +260,7 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     setWelcomeMessage,
     clearSession,
     checkHealth,
+    executePageAction,
   };
 
   return <AgentContext.Provider value={value}>{children}</AgentContext.Provider>;
@@ -213,6 +272,10 @@ export function useAgent(): AgentContextValue {
   const ctx = useContext(AgentContext);
   if (!ctx) throw new Error('useAgent must be used within AgentProvider');
   return ctx;
+}
+
+export function useAgentContext(): AgentContextValue {
+  return useAgent();
 }
 
 export function useConversation() {
@@ -283,6 +346,12 @@ export function useConversation() {
                 agent.updateLastAgentMessage(accumulated);
               } else if (parsed.type === 'meta' && parsed.session_id) {
                 agent.setSessionId(parsed.session_id);
+              } else if (parsed.type === 'directive') {
+                // Execute page action
+                agent.executePageAction({
+                  type: parsed.directive,
+                  target: parsed.target,
+                });
               }
             } catch {
               // skip malformed SSE chunks

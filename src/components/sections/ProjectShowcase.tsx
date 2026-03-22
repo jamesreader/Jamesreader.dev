@@ -145,6 +145,7 @@ export default function ProjectShowcase({ intent }: { intent: Intent }) {
               key={project.id}
               variants={item}
               className="group"
+              data-project={project.id}
             >
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
                 {/* Left: meta */}
