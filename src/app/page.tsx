@@ -34,31 +34,70 @@ function RenderSection({ id, intent }: { id: string; intent: Intent }) {
   }
 }
 
+// ── Section entrance animation ─────────────────────────
+
+const sectionVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 40,
+    filter: 'blur(4px)',
+  },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.6,
+      delay: i * 0.12,
+      ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
+    },
+  }),
+};
+
 // ── Default page (no intent yet) ───────────────────────
 
 function DefaultPage() {
   return (
     <section className="ambient-gradient min-h-[85vh] flex items-center">
       <div className="max-w-5xl mx-auto px-6 py-20">
-        <div className="animate-fade-in-up">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
           <p className="font-sans text-sm font-medium tracking-widest uppercase text-turquoise mb-6">
             Builder / IT Leader / AI Engineer
           </p>
-        </div>
-        <h1 className="animate-fade-in-up delay-100 font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-charcoal dark:text-cream max-w-4xl">
+        </motion.div>
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
+          className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] text-charcoal dark:text-cream max-w-4xl"
+        >
           I build systems that think, infrastructure that scales, and tools that solve real problems.
-        </h1>
-        <p className="animate-fade-in-up delay-200 mt-8 text-lg md:text-xl text-charcoal/70 dark:text-dark-muted max-w-2xl leading-relaxed font-sans">
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
+          className="mt-8 text-lg md:text-xl text-charcoal/70 dark:text-dark-muted max-w-2xl leading-relaxed font-sans"
+        >
           Twenty years in IT taught me what breaks. Now I build what lasts.
-        </p>
-        <div className="animate-fade-in-up delay-300 mt-10 flex flex-wrap gap-4">
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
+          className="mt-10 flex flex-wrap gap-4"
+        >
           <Link href="/work" className="inline-flex items-center px-6 py-3 bg-charcoal dark:bg-cream text-cream dark:text-charcoal font-sans text-sm font-medium rounded hover:bg-charcoal/90 dark:hover:bg-cream/90 transition-colors">
             See my work
           </Link>
           <Link href="/about" className="inline-flex items-center px-6 py-3 border border-charcoal/20 dark:border-dark-border text-charcoal dark:text-cream font-sans text-sm font-medium rounded hover:border-turquoise hover:text-turquoise transition-colors">
             About me
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -78,8 +117,8 @@ export default function Home() {
           <motion.div
             key="default"
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, scale: 0.98, filter: 'blur(6px)' }}
+            transition={{ duration: 0.4 }}
           >
             <DefaultPage />
           </motion.div>
@@ -88,21 +127,21 @@ export default function Home() {
             key={`flow-${intent}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.3 }}
           >
-            {/* Content flows naturally — all sections rendered, scrollable */}
             {sectionOrder[intent].map((sectionId, index) => (
               <motion.div
                 key={sectionId}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.06, ease: 'easeOut' as const }}
+                custom={index}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-80px' }}
+                variants={sectionVariants}
               >
                 <RenderSection id={sectionId} intent={intent} />
               </motion.div>
             ))}
 
-            {/* Agent overlay — floats on top, annotates, guides */}
             <FloatingGuide />
           </motion.div>
         )}

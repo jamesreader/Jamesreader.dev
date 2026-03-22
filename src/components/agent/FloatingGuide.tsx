@@ -1,20 +1,15 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAgentContext } from '@/context/AgentProvider'
+import { useAgent } from '@/context/AgentProvider'
 
 interface Annotation {
   id: string
   content: string
   section: string
-  cta?: {
-    text: string
-    action: () => void
-  }
 }
 
-// Section navigation dots
 const SECTIONS = [
   { id: 'hero', label: 'Top' },
   { id: 'projects', label: 'Projects' },
@@ -25,64 +20,28 @@ const SECTIONS = [
 ]
 
 export default function FloatingGuide() {
-  const { intent } = useAgentContext()
+  const { intent, isOpen, setIsOpen } = useAgent()
   const [currentSection, setCurrentSection] = useState('hero')
   const [showSectionNav, setShowSectionNav] = useState(false)
   const [annotation, setAnnotation] = useState<Annotation | null>(null)
   const [isLoadingAnnotation, setIsLoadingAnnotation] = useState(false)
+  const lastAnnotatedSection = useRef<string>('')
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Track scroll position and current section
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY
-      const windowHeight = window.innerHeight
-      
-      // Show section nav after scrolling past hero
-      setShowSectionNav(scrollY > windowHeight * 0.3)
-
-      // Determine current section based on scroll position
-      const sections = SECTIONS.slice(1) // Skip 'hero'
-      let current = 'hero'
-      
-      for (const section of sections) {
-        const element = document.getElementById(section.id)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          if (rect.top <= windowHeight * 0.4) {
-            current = section.id
-          }
-        }
-      }
-
-      if (current !== currentSection) {
-        setCurrentSection(current)
-        // Trigger annotation when entering a new section
-        if (current !== 'hero') {
-          requestAnnotation(current, scrollY)
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll() // Initial check
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [currentSection])
-
-  const requestAnnotation = async (sectionId: string, scrollY: number) => {
-    if (isLoadingAnnotation) return
+  const requestAnnotation = useCallback(async (sectionId: string) => {
+    if (isLoadingAnnotation || sectionId === lastAnnotatedSection.current) return
+    lastAnnotatedSection.current = sectionId
 
     try {
       setIsLoadingAnnotation(true)
-      
-      // Calculate scroll depth within the section
+
       const sectionElement = document.getElementById(sectionId)
       let scrollDepth = 0
       if (sectionElement) {
         const rect = sectionElement.getBoundingClientRect()
-        const sectionTop = scrollY + rect.top
-        const sectionHeight = rect.height
-        const sectionScroll = Math.max(0, scrollY - sectionTop)
-        scrollDepth = Math.min(1, sectionScroll / sectionHeight)
+        const sectionTop = window.scrollY + rect.top
+        const sectionScroll = Math.max(0, window.scrollY - sectionTop)
+        scrollDepth = Math.min(1, sectionScroll / rect.height)
       }
 
       const response = await fetch('/api/annotate', {
@@ -98,27 +57,18 @@ export default function FloatingGuide() {
       if (response.ok) {
         const data = await response.json()
         if (data.annotation) {
+          const newId = `${sectionId}-${Date.now()}`
           setAnnotation({
-            id: `${sectionId}-${Date.now()}`,
+            id: newId,
             content: data.annotation,
             section: sectionId,
-            cta: {
-              text: "Ask Reader",
-              action: () => {
-                // Open chat with context
-                const chatButton = document.querySelector('[data-chat-toggle]') as HTMLElement
-                if (chatButton) {
-                  chatButton.click()
-                }
-                // TODO: Pre-fill chat input with section-specific question
-              }
-            }
           })
-          
-          // Auto-dismiss after 8 seconds
-          setTimeout(() => {
-            setAnnotation(prev => prev?.id === `${sectionId}-${Date.now()}` ? null : prev)
-          }, 8000)
+
+          // Auto-dismiss after 10 seconds
+          if (dismissTimer.current) clearTimeout(dismissTimer.current)
+          dismissTimer.current = setTimeout(() => {
+            setAnnotation(prev => prev?.id === newId ? null : prev)
+          }, 10000)
         }
       }
     } catch (error) {
@@ -126,13 +76,56 @@ export default function FloatingGuide() {
     } finally {
       setIsLoadingAnnotation(false)
     }
-  }
+  }, [isLoadingAnnotation, intent])
+
+  // Track scroll position and current section
+  useEffect(() => {
+    let ticking = false
+    const handleScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY
+        const windowHeight = window.innerHeight
+
+        setShowSectionNav(scrollY > windowHeight * 0.3)
+
+        const sections = SECTIONS.slice(1)
+        let current = 'hero'
+
+        for (const section of sections) {
+          const element = document.getElementById(section.id)
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            if (rect.top <= windowHeight * 0.4) {
+              current = section.id
+            }
+          }
+        }
+
+        if (current !== currentSection) {
+          setCurrentSection(current)
+          if (current !== 'hero') {
+            requestAnnotation(current)
+          }
+        }
+        ticking = false
+      })
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [currentSection, requestAnnotation])
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
+  }
+
+  const openChat = () => {
+    if (!isOpen) setIsOpen(true)
   }
 
   return (
@@ -144,103 +137,104 @@ export default function FloatingGuide() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
+            className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col gap-3"
           >
-            <nav className="flex flex-col gap-3">
-              {SECTIONS.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
+            {SECTIONS.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className="group relative flex items-center"
+                title={section.label}
+              >
+                <span
                   className={`
-                    group relative w-3 h-3 rounded-full transition-all duration-200
+                    block rounded-full transition-all duration-300
                     ${currentSection === section.id
-                      ? 'bg-turquoise-400 scale-125'
-                      : 'bg-charcoal-200 hover:bg-turquoise-300'
+                      ? 'w-3 h-3 bg-turquoise shadow-md shadow-turquoise/30'
+                      : 'w-2 h-2 bg-charcoal/20 dark:bg-cream/20 group-hover:bg-turquoise/60'
                     }
                   `}
-                  title={section.label}
-                >
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap
-                    text-sm text-charcoal-600 opacity-0 group-hover:opacity-100
-                    transition-opacity duration-200 pointer-events-none">
-                    {section.label}
-                  </span>
-                </button>
-              ))}
-            </nav>
+                />
+                <span className="absolute left-7 whitespace-nowrap text-xs font-sans
+                  text-charcoal/60 dark:text-cream/60 opacity-0 group-hover:opacity-100
+                  transition-opacity duration-200 pointer-events-none">
+                  {section.label}
+                </span>
+              </button>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Annotations - Right side desktop, bottom mobile */}
-      <AnimatePresence>
+      {/* Annotations */}
+      <AnimatePresence mode="wait">
         {annotation && (
           <>
-            {/* Desktop annotation */}
+            {/* Desktop — right side floating card */}
             <motion.div
               key={annotation.id}
-              initial={{ opacity: 0, x: 20, scale: 0.95 }}
+              initial={{ opacity: 0, x: 30, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 20, scale: 0.95 }}
-              className="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden lg:block max-w-xs"
+              exit={{ opacity: 0, x: 30, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block max-w-[280px]"
             >
-              <div className="bg-cream-50 border border-turquoise-200 rounded-lg p-4 shadow-lg">
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-turquoise-400 mt-2 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm text-charcoal-700 leading-relaxed mb-3">
-                      {annotation.content}
-                    </p>
-                    {annotation.cta && (
-                      <button
-                        onClick={annotation.cta.action}
-                        className="text-xs text-turquoise-600 hover:text-turquoise-700 
-                          font-medium transition-colors"
-                      >
-                        {annotation.cta.text} →
-                      </button>
-                    )}
-                  </div>
+              <div className="relative bg-charcoal/95 dark:bg-dark-surface/95 backdrop-blur-sm
+                border border-turquoise/20 rounded-xl p-5 shadow-2xl shadow-turquoise/5">
+                {/* Turquoise accent line */}
+                <div className="absolute top-0 left-5 right-5 h-[2px] bg-gradient-to-r from-transparent via-turquoise/60 to-transparent" />
+                
+                <p className="text-sm text-cream/90 dark:text-cream/90 leading-relaxed mb-4 font-sans">
+                  {annotation.content}
+                </p>
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={openChat}
+                    className="text-xs text-turquoise hover:text-turquoise-dim font-medium 
+                      transition-colors font-sans flex items-center gap-1.5"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                    </svg>
+                    Ask Reader
+                  </button>
                   <button
                     onClick={() => setAnnotation(null)}
-                    className="text-charcoal-400 hover:text-charcoal-600 text-sm"
+                    className="text-cream/30 hover:text-cream/60 transition-colors text-xs"
                   >
-                    ×
+                    dismiss
                   </button>
                 </div>
               </div>
             </motion.div>
 
-            {/* Mobile annotation - bottom toast */}
+            {/* Mobile — bottom toast */}
             <motion.div
               key={`mobile-${annotation.id}`}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="fixed bottom-20 left-4 right-4 z-40 lg:hidden"
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed bottom-24 left-4 right-4 z-40 lg:hidden"
             >
-              <div className="bg-cream-50 border border-turquoise-200 rounded-lg p-4 shadow-lg">
-                <div className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full bg-turquoise-400 mt-1 flex-shrink-0" />
-                  <div className="flex-1">
-                    <p className="text-sm text-charcoal-700 leading-relaxed mb-2">
-                      {annotation.content}
-                    </p>
-                    {annotation.cta && (
-                      <button
-                        onClick={annotation.cta.action}
-                        className="text-xs text-turquoise-600 hover:text-turquoise-700 
-                          font-medium transition-colors"
-                      >
-                        {annotation.cta.text} →
-                      </button>
-                    )}
-                  </div>
+              <div className="bg-charcoal/95 dark:bg-dark-surface/95 backdrop-blur-sm
+                border border-turquoise/20 rounded-xl p-4 shadow-2xl">
+                <div className="absolute top-0 left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-turquoise/60 to-transparent" />
+                <p className="text-sm text-cream/90 leading-relaxed mb-3 font-sans">
+                  {annotation.content}
+                </p>
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={openChat}
+                    className="text-xs text-turquoise hover:text-turquoise-dim font-medium transition-colors font-sans"
+                  >
+                    Ask Reader →
+                  </button>
                   <button
                     onClick={() => setAnnotation(null)}
-                    className="text-charcoal-400 hover:text-charcoal-600 text-sm"
+                    className="text-cream/30 hover:text-cream/60 transition-colors text-xs"
                   >
-                    ×
+                    dismiss
                   </button>
                 </div>
               </div>
