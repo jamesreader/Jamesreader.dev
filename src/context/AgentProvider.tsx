@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 
 // ── Types ──────────────────────────────────────────────
 
-export type Intent = 'consulting' | 'technical' | 'personal' | 'exploring';
+export type Intent = 'consulting' | 'technical' | 'personal' | 'exploring' | 'evaluating';
 
 export interface Message {
   id: string;

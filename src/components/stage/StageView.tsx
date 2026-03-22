@@ -112,6 +112,7 @@ function getSuggestionsForContext(intent: Intent, visitedTopics: string[]): Sugg
     technical: ['infra', 'localai', 'smis', 'projects', 'deep_smis', 'philosophy'],
     personal: ['story', 'philosophy', 'projects', 'meridian', 'infra', 'consulting'],
     exploring: ['projects', 'infra', 'story', 'philosophy', 'consulting', 'smis'],
+    evaluating: ['projects', 'infra', 'consulting', 'philosophy', 'smis', 'story'],
   };
 
   const ordered = priority[intent]

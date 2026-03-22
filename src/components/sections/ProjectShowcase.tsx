@@ -33,7 +33,7 @@ const allProjects: Project[] = [
     status: 'Live',
     link: 'https://meridianmoney.app',
     linkLabel: 'Visit meridianmoney.app',
-    relevance: { consulting: 9, technical: 6, personal: 5, exploring: 8 },
+    relevance: { consulting: 9, technical: 6, personal: 5, exploring: 8, evaluating: 7 },
   },
   {
     id: 'smis',
@@ -51,7 +51,7 @@ const allProjects: Project[] = [
     status: 'Active',
     link: 'https://smis.personafi.app',
     linkLabel: 'View live app',
-    relevance: { consulting: 10, technical: 8, personal: 4, exploring: 7 },
+    relevance: { consulting: 10, technical: 8, personal: 4, exploring: 7, evaluating: 8 },
   },
   {
     id: 'local-ai',
@@ -67,7 +67,7 @@ const allProjects: Project[] = [
       'This site\'s AI agent runs on this exact stack',
     ],
     status: 'Running',
-    relevance: { consulting: 6, technical: 10, personal: 3, exploring: 7 },
+    relevance: { consulting: 6, technical: 10, personal: 3, exploring: 7, evaluating: 6 },
   },
   {
     id: 'edgewood-ai',
@@ -82,7 +82,7 @@ const allProjects: Project[] = [
       'Privacy-first: all processing on local infrastructure',
     ],
     status: 'Active',
-    relevance: { consulting: 8, technical: 7, personal: 6, exploring: 6 },
+    relevance: { consulting: 8, technical: 7, personal: 6, exploring: 6, evaluating: 7 },
   },
 ];
 

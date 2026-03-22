@@ -283,6 +283,48 @@ const flows: Record<Intent, FlowDefinition> = {
       ],
     },
   },
+  evaluating: {
+    initial: [
+      { type: 'section', id: 'hero', component: 'hero' },
+      { type: 'narration', message: "Paste or upload a job description and I'll give you an honest assessment of whether James is a good fit — no sales pitch, just the truth." },
+      {
+        type: 'prompt',
+        question: 'After the evaluation, want to explore more?',
+        options: [
+          { id: 'see-work', icon: '🔨', label: 'See the projects', description: 'What James has actually built.', nextSteps: 'projects' },
+          { id: 'the-stack', icon: '⚙️', label: 'The infrastructure', description: 'Self-hosted AI and hardware.', nextSteps: 'infra' },
+          { id: 'get-in-touch', icon: '🤝', label: 'Get in touch', description: 'Start a conversation.', nextSteps: 'consulting-cta' },
+        ],
+      },
+    ],
+    branches: {
+      projects: [
+        { type: 'section', id: 'projects', component: 'projects' },
+        {
+          type: 'prompt',
+          question: 'What next?',
+          options: [
+            { id: 'the-stack', icon: '⚙️', label: 'The infrastructure', description: 'What powers all of this.', nextSteps: 'infra' },
+            { id: 'get-in-touch', icon: '🤝', label: 'Get in touch', description: 'Work with James.', nextSteps: 'consulting-cta' },
+          ],
+        },
+      ],
+      infra: [
+        { type: 'section', id: 'infrastructure', component: 'infrastructure' },
+        {
+          type: 'prompt',
+          question: 'Anything else?',
+          options: [
+            { id: 'see-work', icon: '🔨', label: 'The projects', description: 'What this stack powers.', nextSteps: 'projects' },
+            { id: 'get-in-touch', icon: '🤝', label: 'Get in touch', description: 'Consulting and collaboration.', nextSteps: 'consulting-cta' },
+          ],
+        },
+      ],
+      'consulting-cta': [
+        { type: 'section', id: 'consulting', component: 'consulting' },
+      ],
+    },
+  },
 };
 
 // ── Section renderer ───────────────────────────────────

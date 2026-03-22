@@ -39,6 +39,12 @@ const heroContent: Record<Intent, {
     cta: { text: 'See my work', href: '#projects' },
     secondaryCta: { text: 'About me', href: '#story' },
   },
+  evaluating: {
+    label: 'Job Fit Evaluator',
+    headline: 'Is James the right fit? Let\u2019s find out — honestly.',
+    subtext: 'Paste a job description and Reader will give you a straight assessment. Strong matches, partial fits, and real gaps — no sales pitch.',
+    cta: { text: 'Start evaluation', href: '#evaluate' },
+  },
 };
 
 export default function HeroSection({ intent }: { intent: Intent }) {

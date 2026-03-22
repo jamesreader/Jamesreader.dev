@@ -10,31 +10,37 @@ const intents: Array<{
   id: Intent;
   icon: string;
   title: string;
-  description: string;
+  subtitle: string;
 }> = [
   {
     id: 'consulting',
     icon: '🏗️',
     title: 'I need something built',
-    description: 'Explore consulting services, capabilities, and engagement models.',
+    subtitle: 'Consulting & capabilities',
   },
   {
     id: 'technical',
     icon: '🔍',
     title: 'Researching AI solutions',
-    description: 'Deep-dive into architectures, technical decisions, and live infrastructure.',
+    subtitle: 'Architecture & infrastructure',
+  },
+  {
+    id: 'evaluating',
+    icon: '🎯',
+    title: 'Evaluate a job fit',
+    subtitle: 'Paste a JD, get an honest assessment',
   },
   {
     id: 'personal',
     icon: '👤',
     title: 'Learn about James',
-    description: 'The journey from IT Director to AI engineer — philosophy, story, and approach.',
+    subtitle: 'Story, philosophy & approach',
   },
   {
     id: 'exploring',
     icon: '🧭',
     title: 'Just exploring',
-    description: 'Curiosity-driven discovery. Let me show you around.',
+    subtitle: 'Curiosity-driven discovery',
   },
 ];
 
@@ -68,55 +74,61 @@ export default function IntentSelector() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-cream/90 dark:bg-dark-bg/90 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-cream/90 dark:bg-dark-bg/90 backdrop-blur-md overflow-hidden"
         >
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
-            className="max-w-3xl w-full mx-6"
+            className="max-w-2xl w-full mx-4 flex flex-col items-center max-h-[100dvh] py-6 sm:py-0"
           >
-            {/* Header */}
-            <div className="text-center mb-10">
+            {/* Header — compact on mobile */}
+            <div className="text-center mb-4 sm:mb-8 shrink-0">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-turquoise/10 mb-6"
+                className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-turquoise/10 mb-3 sm:mb-5"
               >
-                <span className="text-turquoise text-2xl font-serif font-bold">R</span>
+                <span className="text-turquoise text-xl sm:text-2xl font-serif font-bold">R</span>
               </motion.div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal dark:text-cream mb-3">
+              <h2 className="font-serif text-2xl sm:text-4xl font-bold text-charcoal dark:text-cream mb-1 sm:mb-2">
                 Welcome. I&apos;m Reader.
               </h2>
-              <p className="font-sans text-charcoal/60 dark:text-dark-muted text-lg max-w-lg mx-auto">
-                I&apos;m James&apos;s AI guide. What brings you here today?
+              <p className="font-sans text-charcoal/60 dark:text-dark-muted text-sm sm:text-lg max-w-lg mx-auto">
+                I&apos;m James&apos;s AI guide. What brings you here?
               </p>
             </div>
 
-            {/* Intent Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Intent Cards — compact stacked list */}
+            <div className="w-full flex flex-col gap-2 sm:gap-3 shrink-0">
               {intents.map((item, index) => (
                 <motion.button
                   key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.08 }}
+                  transition={{ duration: 0.3, delay: 0.25 + index * 0.06 }}
                   onClick={() => handleSelect(item.id)}
-                  className="group text-left p-6 rounded-xl
+                  className="group flex items-center gap-3 sm:gap-4 px-4 py-3 sm:px-5 sm:py-4 rounded-xl
                     bg-white/70 dark:bg-dark-surface/70 backdrop-blur-sm
                     border border-stone-dark/20 dark:border-dark-border/30
                     hover:border-turquoise/50 hover:shadow-lg hover:shadow-turquoise/5
-                    transition-all duration-300"
+                    active:scale-[0.98]
+                    transition-all duration-200 w-full text-left"
                 >
-                  <span className="text-2xl mb-3 block">{item.icon}</span>
-                  <h3 className="font-serif text-lg font-semibold text-charcoal dark:text-cream mb-1 group-hover:text-turquoise transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="font-sans text-sm text-charcoal/60 dark:text-dark-muted leading-relaxed">
-                    {item.description}
-                  </p>
+                  <span className="text-xl sm:text-2xl shrink-0">{item.icon}</span>
+                  <div className="min-w-0">
+                    <h3 className="font-serif text-base sm:text-lg font-semibold text-charcoal dark:text-cream group-hover:text-turquoise transition-colors leading-tight">
+                      {item.title}
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-charcoal/50 dark:text-dark-muted leading-snug">
+                      {item.subtitle}
+                    </p>
+                  </div>
+                  <span className="ml-auto text-charcoal/20 dark:text-dark-muted/30 group-hover:text-turquoise/50 transition-colors shrink-0">
+                    →
+                  </span>
                 </motion.button>
               ))}
             </div>
@@ -125,12 +137,12 @@ export default function IntentSelector() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="text-center mt-8"
+              transition={{ delay: 0.6 }}
+              className="text-center mt-4 sm:mt-6 shrink-0"
             >
               <button
                 onClick={handleDismiss}
-                className="font-sans text-sm text-charcoal/40 dark:text-dark-muted/60 hover:text-turquoise transition-colors underline underline-offset-4 decoration-charcoal/20 dark:decoration-dark-muted/30 hover:decoration-turquoise"
+                className="font-sans text-xs sm:text-sm text-charcoal/40 dark:text-dark-muted/60 hover:text-turquoise transition-colors underline underline-offset-4 decoration-charcoal/20 dark:decoration-dark-muted/30 hover:decoration-turquoise"
               >
                 Or just browse the site →
               </button>
