@@ -25,7 +25,7 @@ export default function NeuralConstellation({
   lineColor = '0, 180, 216',
   maxNodeOpacity = 0.8,
   maxLineOpacity = 0.35,
-  lineWidth = 1.2,
+  lineWidth = 2.5,
 }: {
   className?: string;
   nodeCount?: number;

@@ -22,8 +22,8 @@ function DefaultPage() {
           className="absolute inset-0 w-full h-full"
           nodeCount={60}
           connectionDistance={180}
-          lineWidth={1.5}
-          maxLineOpacity={0.4}
+          lineWidth={2.5}
+          maxLineOpacity={0.45}
         />
       </div>
       

@@ -59,8 +59,8 @@ export default function HeroSection({ intent }: { intent: Intent }) {
           className="absolute inset-0 w-full h-full"
           nodeCount={55}
           connectionDistance={180}
-          lineWidth={1.5}
-          maxLineOpacity={0.4}
+          lineWidth={2.5}
+          maxLineOpacity={0.45}
         />
       </div>
       <div className="max-w-5xl mx-auto px-6 py-20 relative z-10">

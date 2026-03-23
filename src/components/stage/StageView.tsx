@@ -98,6 +98,7 @@ function getSuggestionsForContext(intent: Intent, visitedTopics: string[]): Sugg
     story: { label: "What's James's background?", value: "Tell me about James's career journey", icon: "📖" },
     philosophy: { label: "What's the building philosophy?", value: "What's James's approach to building?", icon: "🧠" },
     consulting: { label: "I'm interested in working together", value: "I'm interested in consulting — how do engagements work?", icon: "🤝" },
+    evaluate: { label: "Evaluate a job fit", value: "I'd like to evaluate whether James is a good fit for a role", icon: "🎯" },
     localai: { label: "How does the local AI work?", value: "Walk me through the local AI infrastructure", icon: "⚡" },
     deep_smis: { label: "Go deeper on SMIS architecture", value: "What's the technical architecture behind SMIS?", icon: "🔍" },
     deep_meridian: { label: "Go deeper on Meridian's stack", value: "What's the tech stack behind Meridian Money?", icon: "🔍" },
@@ -113,7 +114,7 @@ function getSuggestionsForContext(intent: Intent, visitedTopics: string[]): Sugg
     consulting: ['projects', 'smis', 'meridian', 'infra', 'consulting', 'philosophy'],
     technical: ['infra', 'localai', 'smis', 'projects', 'deep_smis', 'philosophy'],
     personal: ['story', 'philosophy', 'projects', 'meridian', 'infra', 'consulting'],
-    exploring: ['projects', 'infra', 'story', 'philosophy', 'consulting', 'smis'],
+    exploring: ['projects', 'infra', 'story', 'philosophy', 'consulting', 'evaluate', 'smis'],
     evaluating: ['projects', 'infra', 'consulting', 'philosophy', 'smis', 'story'],
   };
 
@@ -252,6 +253,7 @@ export default function StageView() {
   const { sendMessage } = useConversation();
   const [visitedTopics, setVisitedTopics] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showEvaluator, setShowEvaluator] = useState(intent === 'evaluating');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom on new messages
@@ -297,6 +299,12 @@ export default function StageView() {
       }
     }
 
+    // If they clicked evaluate, show the evaluator instead of sending a message
+    if (value.toLowerCase().includes('evaluate')) {
+      setShowEvaluator(true);
+      return;
+    }
+
     sendMessage(value);
   }, [sendMessage]);
 
@@ -305,7 +313,7 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden">
+    <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
       {/* Ambient background */}
       <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
@@ -316,24 +324,24 @@ export default function StageView() {
           className="absolute inset-0 w-full h-full"
           nodeCount={45}
           connectionDistance={200}
-          lineWidth={1.5}
-          maxLineOpacity={0.4}
+          lineWidth={2.5}
+          maxLineOpacity={0.45}
           maxNodeOpacity={0.7}
         />
       </div>
 
       {/* Stage content */}
-      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8">
+      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8 min-h-0">
         {/* Breadcrumb */}
         <BreadcrumbTrail topics={visitedTopics} />
 
-        {/* Job Evaluator — shown when evaluating intent */}
-        {intent === 'evaluating' && conversationHistory.length === 0 && (
+        {/* Job Evaluator — shown when evaluating intent or user clicks evaluate */}
+        {showEvaluator && (
           <JobEvaluator />
         )}
 
         {/* Conversation flow */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin min-h-0">
           <AnimatePresence mode="popLayout">
             {conversationHistory.map((msg, i) => (
               <MessageBubble
