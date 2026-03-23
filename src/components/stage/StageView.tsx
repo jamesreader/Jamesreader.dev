@@ -6,6 +6,7 @@ import { useAgent, useConversation } from '@/context/AgentProvider';
 import type { Intent } from '@/context/AgentProvider';
 import TransitionPrompts from './TransitionPrompts';
 import { ProjectCard, InfraCard, StatCard, PhilosophyCard, CTACard } from './ContentCards';
+import NeuralConstellation from '@/components/NeuralConstellation';
 
 // ── Content block parser ───────────────────────────────
 // Detects content directives in agent messages and renders them
@@ -307,6 +308,17 @@ export default function StageView() {
       {/* Ambient background */}
       <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
+      
+      {/* Neural constellation — fixed background layer */}
+      <div className="fixed inset-0 -z-[5] opacity-[0.06] dark:opacity-[0.15]">
+        <NeuralConstellation
+          className="absolute inset-0 w-full h-full"
+          nodeCount={40}
+          connectionDistance={200}
+          maxLineOpacity={0.2}
+          maxNodeOpacity={0.5}
+        />
+      </div>
 
       {/* Stage content */}
       <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8">

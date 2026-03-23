@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import type { Intent } from '@/context/AgentProvider';
+import NeuralConstellation from '@/components/NeuralConstellation';
 
 const heroContent: Record<Intent, {
   label: string;
@@ -51,8 +52,16 @@ export default function HeroSection({ intent }: { intent: Intent }) {
   const content = heroContent[intent];
 
   return (
-    <section className="ambient-gradient min-h-[70vh] flex items-center">
-      <div className="max-w-5xl mx-auto px-6 py-20">
+    <section className="ambient-gradient min-h-[70vh] flex items-center relative overflow-hidden">
+      {/* Neural constellation background */}
+      <div className="absolute inset-0 opacity-[0.08] dark:opacity-[0.20]">
+        <NeuralConstellation
+          className="absolute inset-0 w-full h-full"
+          nodeCount={50}
+          connectionDistance={150}
+        />
+      </div>
+      <div className="max-w-5xl mx-auto px-6 py-20 relative z-10">
         <motion.div
           key={intent}
           initial={{ opacity: 0, y: 20 }}
