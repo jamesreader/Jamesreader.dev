@@ -54,11 +54,13 @@ export default function HeroSection({ intent }: { intent: Intent }) {
   return (
     <section className="ambient-gradient min-h-[70vh] flex items-center relative overflow-hidden">
       {/* Neural constellation background */}
-      <div className="absolute inset-0 opacity-[0.08] dark:opacity-[0.20]">
+      <div className="absolute inset-0 opacity-[0.15] dark:opacity-[0.35]">
         <NeuralConstellation
           className="absolute inset-0 w-full h-full"
-          nodeCount={50}
-          connectionDistance={150}
+          nodeCount={55}
+          connectionDistance={180}
+          lineWidth={1.5}
+          maxLineOpacity={0.4}
         />
       </div>
       <div className="max-w-5xl mx-auto px-6 py-20 relative z-10">

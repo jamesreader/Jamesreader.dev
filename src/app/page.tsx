@@ -17,11 +17,13 @@ function DefaultPage() {
         dark:from-dark-bg dark:via-dark-bg dark:to-turquoise/5 -z-10" />
       
       {/* Neural constellation background */}
-      <div className="absolute inset-0 -z-[5] opacity-[0.12] blur-[1.5px] dark:opacity-[0.25] dark:blur-[1px]">
+      <div className="absolute inset-0 -z-[5] opacity-[0.18] dark:opacity-[0.35]">
         <NeuralConstellation
           className="absolute inset-0 w-full h-full"
-          nodeCount={55}
-          connectionDistance={160}
+          nodeCount={60}
+          connectionDistance={180}
+          lineWidth={1.5}
+          maxLineOpacity={0.4}
         />
       </div>
       

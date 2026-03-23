@@ -20,11 +20,12 @@ interface Node {
 export default function NeuralConstellation({
   className = '',
   nodeCount = 60,
-  connectionDistance = 180,
+  connectionDistance = 200,
   nodeColor = '0, 180, 216',   // turquoise RGB
   lineColor = '0, 180, 216',
-  maxNodeOpacity = 0.6,
-  maxLineOpacity = 0.15,
+  maxNodeOpacity = 0.8,
+  maxLineOpacity = 0.35,
+  lineWidth = 1.2,
 }: {
   className?: string;
   nodeCount?: number;
@@ -33,6 +34,7 @@ export default function NeuralConstellation({
   lineColor?: string;
   maxNodeOpacity?: number;
   maxLineOpacity?: number;
+  lineWidth?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<Node[]>([]);
@@ -106,7 +108,7 @@ export default function NeuralConstellation({
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = lineWidth;
             ctx.stroke();
           }
         }
@@ -145,7 +147,7 @@ export default function NeuralConstellation({
       cancelAnimationFrame(animRef.current);
       window.removeEventListener('resize', onResize);
     };
-  }, [nodeCount, connectionDistance, nodeColor, lineColor, maxNodeOpacity, maxLineOpacity]);
+  }, [nodeCount, connectionDistance, nodeColor, lineColor, maxNodeOpacity, maxLineOpacity, lineWidth]);
 
   return (
     <canvas

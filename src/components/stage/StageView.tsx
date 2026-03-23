@@ -7,6 +7,7 @@ import type { Intent } from '@/context/AgentProvider';
 import TransitionPrompts from './TransitionPrompts';
 import { ProjectCard, InfraCard, StatCard, PhilosophyCard, CTACard } from './ContentCards';
 import NeuralConstellation from '@/components/NeuralConstellation';
+import JobEvaluator from '@/components/agent/JobEvaluator';
 
 // ── Content block parser ───────────────────────────────
 // Detects content directives in agent messages and renders them
@@ -304,19 +305,20 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-[100dvh] flex flex-col overflow-hidden">
       {/* Ambient background */}
       <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
       
       {/* Neural constellation — fixed background layer */}
-      <div className="fixed inset-0 -z-[5] opacity-[0.06] dark:opacity-[0.15]">
+      <div className="fixed inset-0 -z-[5] opacity-[0.12] dark:opacity-[0.30]">
         <NeuralConstellation
           className="absolute inset-0 w-full h-full"
-          nodeCount={40}
+          nodeCount={45}
           connectionDistance={200}
-          maxLineOpacity={0.2}
-          maxNodeOpacity={0.5}
+          lineWidth={1.5}
+          maxLineOpacity={0.4}
+          maxNodeOpacity={0.7}
         />
       </div>
 
@@ -324,6 +326,11 @@ export default function StageView() {
       <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8">
         {/* Breadcrumb */}
         <BreadcrumbTrail topics={visitedTopics} />
+
+        {/* Job Evaluator — shown when evaluating intent */}
+        {intent === 'evaluating' && conversationHistory.length === 0 && (
+          <JobEvaluator />
+        )}
 
         {/* Conversation flow */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin">
