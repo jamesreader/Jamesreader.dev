@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useAgent } from '@/context/AgentProvider';
 import IntentSelector from '@/components/agent/IntentSelector';
 import StageView from '@/components/stage/StageView';
+import NeuralConstellation from '@/components/NeuralConstellation';
 
 // ── Default page (no intent yet — the empty stage) ────
 
@@ -14,6 +15,15 @@ function DefaultPage() {
       {/* Subtle ambient gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-cream via-cream to-turquoise/3 
         dark:from-dark-bg dark:via-dark-bg dark:to-turquoise/5 -z-10" />
+      
+      {/* Neural constellation background */}
+      <div className="absolute inset-0 -z-[5] opacity-[0.12] blur-[1.5px] dark:opacity-[0.25] dark:blur-[1px]">
+        <NeuralConstellation
+          className="absolute inset-0 w-full h-full"
+          nodeCount={55}
+          connectionDistance={160}
+        />
+      </div>
       
       <div className="max-w-5xl mx-auto px-6 py-20">
         <motion.div
