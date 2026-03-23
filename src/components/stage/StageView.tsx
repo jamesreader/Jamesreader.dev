@@ -111,11 +111,11 @@ function getSuggestionsForContext(intent: Intent, visitedTopics: string[]): Sugg
 
   // Priority ordering by intent
   const priority: Record<Intent, string[]> = {
-    consulting: ['projects', 'smis', 'meridian', 'infra', 'consulting', 'philosophy'],
-    technical: ['infra', 'localai', 'smis', 'projects', 'deep_smis', 'philosophy'],
-    personal: ['story', 'philosophy', 'projects', 'meridian', 'infra', 'consulting'],
-    exploring: ['projects', 'infra', 'story', 'philosophy', 'consulting', 'evaluate', 'smis'],
-    evaluating: ['projects', 'infra', 'consulting', 'philosophy', 'smis', 'story'],
+    consulting: ['projects', 'smis', 'meridian', 'infra', 'consulting', 'evaluate', 'philosophy'],
+    technical: ['infra', 'localai', 'smis', 'projects', 'evaluate', 'deep_smis', 'philosophy'],
+    personal: ['story', 'philosophy', 'projects', 'meridian', 'evaluate', 'infra', 'consulting'],
+    exploring: ['projects', 'infra', 'story', 'evaluate', 'philosophy', 'consulting', 'smis'],
+    evaluating: ['projects', 'infra', 'evaluate', 'consulting', 'philosophy', 'smis', 'story'],
   };
 
   const ordered = priority[intent]
@@ -123,7 +123,7 @@ function getSuggestionsForContext(intent: Intent, visitedTopics: string[]): Sugg
     .map(key => all[key])
     .filter(Boolean);
 
-  return { options: ordered.slice(0, 3) };
+  return { options: ordered.slice(0, 4) };
 }
 
 // ── Message bubble ─────────────────────────────────────
