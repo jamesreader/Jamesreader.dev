@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 import { useState } from 'react';
+import { useAgent } from '@/context/AgentProvider';
 
 const links = [
   { href: '/', label: 'Home' },
@@ -16,6 +17,10 @@ const links = [
 export default function Nav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { intent, clearSession } = useAgent();
+
+  // Show "Talk to Reader" when browsing without an active stage session
+  const showReaderLink = !intent && pathname !== '/';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-stone-dark/30 dark:border-dark-border/30">
@@ -40,6 +45,15 @@ export default function Nav() {
               {label}
             </Link>
           ))}
+          {showReaderLink && (
+            <Link
+              href="/"
+              className="text-sm font-sans tracking-wide text-turquoise hover:text-turquoise-dim transition-colors flex items-center gap-1.5"
+            >
+              <span className="w-2 h-2 rounded-full bg-turquoise animate-pulse" />
+              Talk to Reader
+            </Link>
+          )}
           <ThemeToggle />
         </div>
 
@@ -81,6 +95,16 @@ export default function Nav() {
               {label}
             </Link>
           ))}
+          {showReaderLink && (
+            <Link
+              href="/"
+              onClick={() => setMenuOpen(false)}
+              className="block py-3 text-base font-sans text-turquoise flex items-center gap-2"
+            >
+              <span className="w-2 h-2 rounded-full bg-turquoise animate-pulse" />
+              Talk to Reader
+            </Link>
+          )}
         </div>
       )}
     </nav>
