@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAgent, useConversation } from '@/context/AgentProvider';
 import type { Intent } from '@/context/AgentProvider';
@@ -8,80 +8,7 @@ import TransitionPrompts from './TransitionPrompts';
 import { ProjectCard, InfraCard, StatCard, PhilosophyCard, CTACard } from './ContentCards';
 import NeuralConstellation from '@/components/NeuralConstellation';
 import JobEvaluator from '@/components/agent/JobEvaluator';
-
-// ── Content block parser ───────────────────────────────
-// Detects content directives in agent messages and renders them
-
-interface ParsedBlock {
-  type: 'text' | 'content';
-  value: string;
-  contentType?: string;
-  props?: Record<string, unknown>;
-}
-
-// Directive patterns the agent can include:
-// {{project:smis}} {{project:meridian-money}} etc
-// {{infra}} 
-// {{stat:45 tok/s|Inference Speed|On DGX Spark}}
-// {{philosophy:quote text here}}
-// {{cta}}
-function parseAgentMessage(text: string): ParsedBlock[] {
-  const blocks: ParsedBlock[] = [];
-  // Match both {{type:data}} and {type:data} (some models use single braces)
-  const pattern = /\{\{?(\w+)(?::([^}]*))?\}?\}/g;
-  let lastIndex = 0;
-  let match;
-
-  while ((match = pattern.exec(text)) !== null) {
-    // Text before this block
-    if (match.index > lastIndex) {
-      const textBefore = text.slice(lastIndex, match.index).trim();
-      if (textBefore) {
-        blocks.push({ type: 'text', value: textBefore });
-      }
-    }
-
-    const blockType = match[1];
-    const blockData = match[2] || '';
-
-    // Strip leading/trailing quotes and whitespace from data
-    const cleanData = blockData.replace(/^[\s"']+|[\s"']+$/g, '').trim();
-
-    switch (blockType) {
-      case 'project':
-        blocks.push({ type: 'content', value: cleanData, contentType: 'project', props: { projectId: cleanData.replace(/[- ]/g, (m) => m === ' ' ? '-' : m).toLowerCase() } });
-        break;
-      case 'infra':
-        blocks.push({ type: 'content', value: 'infra', contentType: 'infra' });
-        break;
-      case 'stat': {
-        const [value, label, context] = cleanData.split('|');
-        blocks.push({ type: 'content', value: 'stat', contentType: 'stat', props: { value, label, context } });
-        break;
-      }
-      case 'philosophy':
-        blocks.push({ type: 'content', value: cleanData, contentType: 'philosophy', props: { quote: cleanData } });
-        break;
-      case 'cta':
-        blocks.push({ type: 'content', value: 'cta', contentType: 'cta' });
-        break;
-      default:
-        blocks.push({ type: 'text', value: match[0] });
-    }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Remaining text
-  if (lastIndex < text.length) {
-    const remaining = text.slice(lastIndex).trim();
-    if (remaining) {
-      blocks.push({ type: 'text', value: remaining });
-    }
-  }
-
-  return blocks.length > 0 ? blocks : [{ type: 'text', value: text }];
-}
+import { parseAgentMessage } from '@/lib/parseAgentMessage';
 
 // ── Transition prompt suggestions ──────────────────────
 
@@ -364,6 +291,57 @@ export default function StageView() {
             />
           )}
         </AnimatePresence>
+
+        {/* Free-text input */}
+        <StageInput onSend={sendMessage} disabled={isStreaming} />
+      </div>
+    </div>
+  );
+}
+
+// ── Free-text input for Stage view ─────────────────────
+
+function StageInput({ onSend, disabled }: { onSend: (text: string) => void; disabled: boolean }) {
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleSend = () => {
+    if (!input.trim() || disabled) return;
+    onSend(input.trim());
+    setInput('');
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  return (
+    <div className="shrink-0 pt-2 pb-2">
+      <div className="flex items-end gap-2 bg-white/70 dark:bg-dark-surface/50 backdrop-blur-sm rounded-xl border border-stone-dark/20 dark:border-dark-border/30 p-2 focus-within:border-turquoise/50 transition-colors">
+        <textarea
+          ref={inputRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask something else…"
+          disabled={disabled}
+          rows={1}
+          className="flex-1 resize-none bg-transparent text-sm text-charcoal dark:text-dark-text placeholder:text-charcoal/40 dark:placeholder:text-dark-muted/60 outline-none max-h-32 py-1 px-2"
+          style={{ minHeight: '1.75rem' }}
+        />
+        <button
+          onClick={handleSend}
+          disabled={!input.trim() || disabled}
+          className="p-2 rounded-lg bg-turquoise text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-turquoise-dim transition-colors shrink-0"
+          aria-label="Send message"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+          </svg>
+        </button>
       </div>
     </div>
   );

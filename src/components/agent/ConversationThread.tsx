@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useAgent, useConversation } from '@/context/AgentProvider';
+import { parseAgentMessage } from '@/lib/parseAgentMessage';
+import { ProjectCard, InfraCard, StatCard, PhilosophyCard, CTACard } from '@/components/stage/ContentCards';
 
 // ── Typing Indicator ───────────────────────────────────
 
@@ -31,6 +33,17 @@ function MessageBubble({ role, content, isStreaming }: {
   isStreaming?: boolean;
 }) {
   const isUser = role === 'user';
+  const blocks = !isUser ? parseAgentMessage(content) : null;
+  const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set());
+
+  const toggleProject = (id: string) => {
+    setExpandedProjects(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
     <motion.div
@@ -39,28 +52,60 @@ function MessageBubble({ role, content, isStreaming }: {
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}
     >
-      <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-          isUser
-            ? 'bg-turquoise text-white rounded-br-md'
-            : 'bg-white/80 dark:bg-dark-surface/80 text-charcoal dark:text-dark-text border border-stone-dark/20 dark:border-dark-border/30 rounded-bl-md'
-        }`}
-      >
+      <div className={`max-w-[85%] ${isUser ? '' : 'w-full'}`}>
         {isUser ? (
-          <p className="whitespace-pre-wrap">{content}</p>
-        ) : content ? (
-          <div className="prose-agent">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+          <div className="rounded-2xl rounded-br-md px-4 py-3 text-sm leading-relaxed bg-turquoise text-white">
+            <p className="whitespace-pre-wrap">{content}</p>
           </div>
+        ) : !content ? (
+          isStreaming ? (
+            <div className="rounded-2xl rounded-bl-md px-4 py-3 bg-white/80 dark:bg-dark-surface/80 border border-stone-dark/20 dark:border-dark-border/30">
+              <TypingIndicator />
+            </div>
+          ) : null
         ) : (
-          isStreaming && <TypingIndicator />
-        )}
-        {!isUser && isStreaming && content && (
-          <motion.span
-            className="inline-block w-0.5 h-4 bg-turquoise ml-0.5 align-text-bottom"
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.6, repeat: Infinity }}
-          />
+          <div className="space-y-3">
+            {blocks!.map((block, i) => {
+              if (block.type === 'text') {
+                return (
+                  <div key={i} className="rounded-2xl rounded-bl-md px-4 py-3 text-sm leading-relaxed bg-white/80 dark:bg-dark-surface/80 text-charcoal dark:text-dark-text border border-stone-dark/20 dark:border-dark-border/30">
+                    <div className="prose-agent">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{block.value}</ReactMarkdown>
+                    </div>
+                    {isStreaming && i === blocks!.length - 1 && (
+                      <motion.span
+                        className="inline-block w-0.5 h-4 bg-turquoise ml-0.5 align-text-bottom"
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.6, repeat: Infinity }}
+                      />
+                    )}
+                  </div>
+                );
+              }
+              // Content blocks
+              switch (block.contentType) {
+                case 'project':
+                  return (
+                    <ProjectCard
+                      key={i}
+                      projectId={block.props?.projectId as string}
+                      expanded={expandedProjects.has(block.props?.projectId as string)}
+                      onToggle={() => toggleProject(block.props?.projectId as string)}
+                    />
+                  );
+                case 'infra':
+                  return <InfraCard key={i} />;
+                case 'stat':
+                  return <StatCard key={i} value={block.props?.value as string} label={block.props?.label as string} context={block.props?.context as string} />;
+                case 'philosophy':
+                  return <PhilosophyCard key={i} quote={block.props?.quote as string} />;
+                case 'cta':
+                  return <CTACard key={i} headline="Let's build something" subtext="Start with a conversation — no commitment, no pitch deck required." buttonText="Get in touch" email="james@swds.biz" />;
+                default:
+                  return null;
+              }
+            })}
+          </div>
         )}
       </div>
     </motion.div>
