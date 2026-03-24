@@ -176,7 +176,7 @@ function BreadcrumbTrail({ topics }: { topics: string[] }) {
 // ── Main Stage View ────────────────────────────────────
 
 export default function StageView() {
-  const { intent, conversationHistory, isStreaming } = useAgent();
+  const { intent, conversationHistory, isStreaming, clearSession } = useAgent();
   const { sendMessage } = useConversation();
   const [visitedTopics, setVisitedTopics] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(true);
@@ -259,8 +259,19 @@ export default function StageView() {
 
       {/* Stage content */}
       <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8 min-h-0">
-        {/* Breadcrumb */}
-        <BreadcrumbTrail topics={visitedTopics} />
+        {/* Header with breadcrumb + start over */}
+        <div className="flex items-center justify-between mb-2">
+          <BreadcrumbTrail topics={visitedTopics} />
+          <button
+            onClick={clearSession}
+            className="shrink-0 flex items-center gap-1.5 text-xs font-sans text-charcoal/40 dark:text-dark-muted/50 hover:text-turquoise transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+            </svg>
+            Start over
+          </button>
+        </div>
 
         {/* Job Evaluator — shown when evaluating intent or user clicks evaluate */}
         {showEvaluator && (
