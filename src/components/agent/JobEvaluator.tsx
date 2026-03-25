@@ -310,7 +310,8 @@ export default function JobEvaluator() {
 
             {/* Evaluation result */}
             <div className="rounded-xl border border-stone-dark/20 dark:border-dark-border/30
-              bg-white/80 dark:bg-dark-surface/80 backdrop-blur-sm px-5 py-4">
+              bg-white/80 dark:bg-dark-surface/80 backdrop-blur-sm px-5 py-4
+              max-h-[60vh] overflow-y-auto scrollbar-thin">
               {evaluation ? (
                 <div className="prose-agent text-sm leading-relaxed text-charcoal dark:text-dark-text">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{evaluation}</ReactMarkdown>
