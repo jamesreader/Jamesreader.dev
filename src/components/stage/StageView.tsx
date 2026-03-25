@@ -240,7 +240,7 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div className="h-[100dvh] flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
+    <div className="h-[calc(100dvh-4rem)] flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
       {/* Ambient background */}
       <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
@@ -252,13 +252,15 @@ export default function StageView() {
           nodeCount={45}
           connectionDistance={200}
           lineWidth={2.5}
+          desktopLineWidth={5}
+          desktopConnectionDistance={260}
           maxLineOpacity={0.45}
           maxNodeOpacity={0.7}
         />
       </div>
 
       {/* Stage content */}
-      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-24 pb-8 min-h-0">
+      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0">
         {/* Header with breadcrumb + start over */}
         <div className="flex items-center justify-between mb-2">
           <BreadcrumbTrail topics={visitedTopics} />

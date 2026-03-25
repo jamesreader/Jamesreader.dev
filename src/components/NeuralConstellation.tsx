@@ -26,6 +26,8 @@ export default function NeuralConstellation({
   maxNodeOpacity = 0.8,
   maxLineOpacity = 0.35,
   lineWidth = 2.5,
+  desktopLineWidth,
+  desktopConnectionDistance,
 }: {
   className?: string;
   nodeCount?: number;
@@ -35,6 +37,8 @@ export default function NeuralConstellation({
   maxNodeOpacity?: number;
   maxLineOpacity?: number;
   lineWidth?: number;
+  desktopLineWidth?: number;
+  desktopConnectionDistance?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const nodesRef = useRef<Node[]>([]);
@@ -45,6 +49,11 @@ export default function NeuralConstellation({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Responsive line width + connection distance for desktop
+    const isDesktop = () => window.innerWidth >= 1024;
+    const getLineWidth = () => (isDesktop() && desktopLineWidth) ? desktopLineWidth : lineWidth;
+    const getConnectionDist = () => (isDesktop() && desktopConnectionDistance) ? desktopConnectionDistance : connectionDistance;
 
     // Size canvas to container
     const resize = () => {
@@ -96,19 +105,21 @@ export default function NeuralConstellation({
       }
 
       // Draw connections
+      const currentConnDist = getConnectionDist();
+      const currentLineWidth = getLineWidth();
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < connectionDistance) {
-            const opacity = (1 - dist / connectionDistance) * maxLineOpacity;
+          if (dist < currentConnDist) {
+            const opacity = (1 - dist / currentConnDist) * maxLineOpacity;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
             ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
-            ctx.lineWidth = lineWidth;
+            ctx.lineWidth = currentLineWidth;
             ctx.stroke();
           }
         }
@@ -147,7 +158,7 @@ export default function NeuralConstellation({
       cancelAnimationFrame(animRef.current);
       window.removeEventListener('resize', onResize);
     };
-  }, [nodeCount, connectionDistance, nodeColor, lineColor, maxNodeOpacity, maxLineOpacity, lineWidth]);
+  }, [nodeCount, connectionDistance, nodeColor, lineColor, maxNodeOpacity, maxLineOpacity, lineWidth, desktopLineWidth, desktopConnectionDistance]);
 
   return (
     <canvas

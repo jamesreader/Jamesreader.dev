@@ -23,6 +23,8 @@ function DefaultPage() {
           nodeCount={60}
           connectionDistance={180}
           lineWidth={2.5}
+          desktopLineWidth={5}
+          desktopConnectionDistance={260}
           maxLineOpacity={0.45}
         />
       </div>
