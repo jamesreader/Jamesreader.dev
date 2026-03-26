@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-cream-dark dark:bg-dark-surface border-t border-stone-dark/20 dark:border-dark-border/20">
-      <div className="max-w-6xl mx-auto px-6 py-12">
+    <footer id="site-footer" className="bg-cream-dark dark:bg-dark-surface border-t border-stone-dark/20 dark:border-dark-border/20">
+      <div id="footer-inner" className="max-w-6xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>

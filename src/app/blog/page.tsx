@@ -11,7 +11,7 @@ export default function BlogPage() {
   const posts = getAllPosts();
 
   return (
-    <div className="py-16 md:py-24">
+    <div id="page-blog" className="py-16 md:py-24">
       <div className="max-w-3xl mx-auto px-6">
         {/* Header */}
         <div className="mb-16">

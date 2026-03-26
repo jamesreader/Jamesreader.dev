@@ -150,10 +150,11 @@ export default function JobEvaluator() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
+      id="job-evaluator"
       className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-12 overflow-y-auto max-h-[calc(100dvh-5rem)]"
     >
       {/* Header */}
-      <div className="text-center mb-3 sm:mb-8">
+      <div id="eval-header" className="text-center mb-3 sm:mb-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -174,6 +175,7 @@ export default function JobEvaluator() {
       <AnimatePresence mode="wait">
         {phase === 'input' && (
           <motion.div
+            id="eval-input"
             key="input"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -293,6 +295,7 @@ export default function JobEvaluator() {
         {/* Streaming / Complete Phase */}
         {(phase === 'streaming' || phase === 'complete') && (
           <motion.div
+            id="eval-result"
             key="result"
             ref={resultRef}
             initial={{ opacity: 0 }}
@@ -300,7 +303,7 @@ export default function JobEvaluator() {
             transition={{ duration: 0.4 }}
           >
             {/* What was submitted */}
-            <div className="mb-4 px-4 py-3 rounded-xl bg-turquoise/10 border border-turquoise/20">
+            <div id="eval-submitted" className="mb-4 px-4 py-3 rounded-xl bg-turquoise/10 border border-turquoise/20">
               <p className="text-xs font-sans text-turquoise font-medium mb-1">Evaluating</p>
               <p className="text-sm font-sans text-charcoal dark:text-dark-text line-clamp-2">
                 {selectedFile ? `📄 ${selectedFile.name}` : jobDescription.slice(0, 150) + (jobDescription.length > 150 ? '…' : '')}
@@ -308,7 +311,7 @@ export default function JobEvaluator() {
             </div>
 
             {/* Evaluation result */}
-            <div className="rounded-xl border border-stone-dark/20 dark:border-dark-border/30
+            <div id="eval-output" className="rounded-xl border border-stone-dark/20 dark:border-dark-border/30
               bg-white/80 dark:bg-dark-surface/80 backdrop-blur-sm px-5 py-4
               max-h-[60vh] overflow-y-auto scrollbar-thin">
               {evaluation ? (

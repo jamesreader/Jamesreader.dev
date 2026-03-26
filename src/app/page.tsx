@@ -11,7 +11,7 @@ import NeuralConstellation from '@/components/NeuralConstellation';
 
 function DefaultPage() {
   return (
-    <section className="min-h-[85vh] flex items-center relative overflow-hidden">
+    <section id="hero-section" className="min-h-[85vh] flex items-center relative overflow-hidden">
       {/* Subtle ambient gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-cream via-cream to-turquoise/3 
         dark:from-dark-bg dark:via-dark-bg dark:to-turquoise/5 -z-10" />
@@ -29,7 +29,7 @@ function DefaultPage() {
         />
       </div>
       
-      <div className="max-w-5xl mx-auto px-6 py-20">
+      <div id="hero-content" className="max-w-5xl mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

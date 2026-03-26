@@ -23,15 +23,15 @@ export default function Nav() {
   const showReaderLink = !intent && pathname !== '/';
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-stone-dark/30 dark:border-dark-border/30">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <nav id="site-nav" className="fixed top-0 left-0 right-0 z-50 bg-cream/80 dark:bg-dark-bg/80 backdrop-blur-md border-b border-stone-dark/30 dark:border-dark-border/30">
+      <div id="nav-inner" className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="font-serif text-xl font-bold text-charcoal dark:text-cream hover:text-turquoise transition-colors">
+        <Link id="nav-logo" href="/" className="font-serif text-xl font-bold text-charcoal dark:text-cream hover:text-turquoise transition-colors">
           JR
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
+        <div id="nav-links" className="hidden md:flex items-center gap-8">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -58,7 +58,7 @@ export default function Nav() {
         </div>
 
         {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-4">
+        <div id="nav-mobile-btn" className="flex md:hidden items-center gap-4">
           <ThemeToggle />
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -80,7 +80,7 @@ export default function Nav() {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="md:hidden bg-cream dark:bg-dark-bg border-b border-stone-dark/30 dark:border-dark-border/30 px-6 pb-4">
+        <div id="nav-mobile-menu" className="md:hidden bg-cream dark:bg-dark-bg border-b border-stone-dark/30 dark:border-dark-border/30 px-6 pb-4">
           {links.map(({ href, label }) => (
             <Link
               key={href}

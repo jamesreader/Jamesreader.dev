@@ -7,7 +7,7 @@ export default function LabPage() {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="min-h-screen">
+    <div id="page-lab" className="min-h-screen">
       {/* Header */}
       <div className="max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-8">
         <p className="font-sans text-xs font-semibold uppercase tracking-widest text-turquoise mb-3">
@@ -24,7 +24,7 @@ export default function LabPage() {
 
       {/* Particle Simulation */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
-        <div className="rounded-lg overflow-hidden border border-stone-dark/20 dark:border-dark-border/30 bg-black relative">
+        <div id="lab-simulation" className="rounded-lg overflow-hidden border border-stone-dark/20 dark:border-dark-border/30 bg-black relative">
           <div className="flex items-center justify-between px-4 py-3 bg-charcoal/5 dark:bg-dark-surface border-b border-stone-dark/20 dark:border-dark-border/30">
             <div className="flex items-center gap-3">
               <div className="flex gap-1.5">

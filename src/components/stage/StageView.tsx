@@ -240,9 +240,9 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
+    <div id="stage-root" className="h-full flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
       {/* Ambient background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
+      <div id="stage-bg" className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
       
       {/* Neural constellation — fixed background layer */}
@@ -260,9 +260,9 @@ export default function StageView() {
       </div>
 
       {/* Stage content */}
-      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0">
+      <div id="stage-content" className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0">
         {/* Header with breadcrumb + start over */}
-        <div className="flex items-center justify-between mb-2">
+        <div id="stage-header" className="flex items-center justify-between mb-2">
           <BreadcrumbTrail topics={visitedTopics} />
           <button
             onClick={clearSession}
@@ -281,7 +281,7 @@ export default function StageView() {
         )}
 
         {/* Conversation flow */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin min-h-0">
+        <div id="stage-messages" ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin min-h-0">
           <AnimatePresence mode="popLayout">
             {conversationHistory.map((msg, i) => (
               <MessageBubble
@@ -332,7 +332,7 @@ function StageInput({ onSend, disabled }: { onSend: (text: string) => void; disa
   };
 
   return (
-    <div className="shrink-0 pt-2 pb-2">
+    <div id="stage-input" className="shrink-0 pt-2 pb-2">
       <div className="flex items-end gap-2 bg-white/70 dark:bg-dark-surface/50 backdrop-blur-sm rounded-xl border border-stone-dark/20 dark:border-dark-border/30 p-2 focus-within:border-turquoise/50 transition-colors">
         <textarea
           ref={inputRef}

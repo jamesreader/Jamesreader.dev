@@ -74,6 +74,7 @@ export default function IntentSelector() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
+          id="intent-overlay"
           className="fixed inset-0 z-50 flex items-center justify-center bg-cream/90 dark:bg-dark-bg/90 backdrop-blur-md overflow-hidden"
         >
           <motion.div
@@ -81,6 +82,7 @@ export default function IntentSelector() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.5, ease: 'easeOut', delay: 0.1 }}
+            id="intent-panel"
             className="max-w-2xl w-full mx-4 flex flex-col items-center max-h-[100dvh] py-6 sm:py-0"
           >
             {/* Header — compact on mobile */}

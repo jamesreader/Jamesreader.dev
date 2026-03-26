@@ -15,7 +15,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
   return (
     <>
       <Nav />
-      <main className={isStageActive ? 'h-[100dvh] pt-16 overflow-hidden' : 'min-h-screen pt-16'}>
+      <main id="site-main" className={isStageActive ? 'h-[100dvh] pt-16 overflow-hidden' : 'min-h-screen pt-16'}>
         {children}
       </main>
       {!isStageActive && <Footer />}

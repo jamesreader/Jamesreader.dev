@@ -35,6 +35,7 @@ export default function TransitionPrompts({ options, onSelect, disabled }: Trans
 
   return (
     <motion.div
+      id="stage-suggestions"
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}

@@ -47,7 +47,7 @@ const skills = [
 
 export default function AboutPage() {
   return (
-    <div className="py-16 md:py-24">
+    <div id="page-about" className="py-16 md:py-24">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <div className="mb-16 md:mb-20">
