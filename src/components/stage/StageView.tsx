@@ -260,7 +260,7 @@ export default function StageView() {
       </div>
 
       {/* Stage content */}
-      <div id="stage-content" className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0">
+      <div id="stage-content" className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0 overflow-y-auto">
         {/* Header with breadcrumb + start over */}
         <div id="stage-header" className="flex items-center justify-between mb-2">
           <BreadcrumbTrail topics={visitedTopics} />
@@ -281,7 +281,7 @@ export default function StageView() {
         )}
 
         {/* Conversation flow */}
-        <div id="stage-messages" ref={scrollRef} className="flex-1 overflow-y-auto space-y-2 pb-4 scrollbar-thin min-h-0">
+        <div id="stage-messages" ref={scrollRef} className="flex-1 space-y-2 pb-4 min-h-0">
           <AnimatePresence mode="popLayout">
             {conversationHistory.map((msg, i) => (
               <MessageBubble

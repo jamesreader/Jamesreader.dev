@@ -151,7 +151,7 @@ export default function JobEvaluator() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       id="job-evaluator"
-      className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-12 overflow-y-auto max-h-[calc(100dvh-5rem)]"
+      className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-12"
     >
       {/* Header */}
       <div id="eval-header" className="text-center mb-3 sm:mb-8">
