@@ -40,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="site-version" content="2026.03.26.1" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -48,7 +49,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text antialiased">
+      <body data-version="2026.03.26.1" className="bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text antialiased">
         <AgentProvider>
           <LayoutShell>
             {children}
