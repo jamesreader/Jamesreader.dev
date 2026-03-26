@@ -1,7 +1,6 @@
 import './globals.css';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
 import { AgentProvider } from '@/context/AgentProvider';
+import LayoutShell from '@/components/LayoutShell';
 
 export const metadata = {
   title: {
@@ -51,11 +50,9 @@ export default function RootLayout({
       </head>
       <body className="bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text antialiased">
         <AgentProvider>
-          <Nav />
-          <main className="min-h-screen pt-16">
+          <LayoutShell>
             {children}
-          </main>
-          <Footer />
+          </LayoutShell>
         </AgentProvider>
       </body>
     </html>

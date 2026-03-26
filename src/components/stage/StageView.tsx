@@ -240,7 +240,7 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div className="h-[calc(100dvh-4rem)] flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
+    <div className="h-full flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
       {/* Ambient background */}
       <div className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
         dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
