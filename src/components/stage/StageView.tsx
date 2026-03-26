@@ -8,6 +8,8 @@ import TransitionPrompts from './TransitionPrompts';
 import { ProjectCard, InfraCard, StatCard, PhilosophyCard, CTACard } from './ContentCards';
 import NeuralConstellation from '@/components/NeuralConstellation';
 import JobEvaluator from '@/components/agent/JobEvaluator';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { parseAgentMessage } from '@/lib/parseAgentMessage';
 
 // ── Transition prompt suggestions ──────────────────────
@@ -90,12 +92,12 @@ function MessageBubble({ role, content, isStreaming }: {
               if (block.type === 'text') {
                 return (
                   <div key={i} className="px-1">
-                    <p className="font-sans text-sm text-charcoal/80 dark:text-cream/80 leading-relaxed whitespace-pre-wrap">
-                      {block.value}
+                    <div className="font-sans text-sm text-charcoal/80 dark:text-cream/80 leading-relaxed prose-agent">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{block.value}</ReactMarkdown>
                       {isStreaming && i === blocks.length - 1 && (
                         <span className="inline-block w-1.5 h-4 bg-turquoise/60 ml-0.5 animate-pulse" />
                       )}
-                    </p>
+                    </div>
                   </div>
                 );
               }
