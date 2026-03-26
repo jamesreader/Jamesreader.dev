@@ -240,13 +240,13 @@ export default function StageView() {
   const suggestions = getSuggestionsForContext(intent, visitedTopics);
 
   return (
-    <div id="stage-root" className="h-full flex flex-col overflow-hidden" style={{ overscrollBehavior: 'none' }}>
+    <div id="stage-root" className="h-full overflow-y-auto" style={{ overscrollBehavior: 'none' }}>
       {/* Ambient background */}
       <div id="stage-bg" className="fixed inset-0 bg-gradient-to-b from-cream via-cream to-stone/30 
-        dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10" />
+        dark:from-dark-bg dark:via-dark-bg dark:to-dark-surface/50 -z-10 pointer-events-none" />
       
       {/* Neural constellation — fixed background layer */}
-      <div className="fixed inset-0 -z-[5] opacity-[0.12] dark:opacity-[0.30]">
+      <div className="fixed inset-0 -z-[5] opacity-[0.12] dark:opacity-[0.30] pointer-events-none">
         <NeuralConstellation
           className="absolute inset-0 w-full h-full"
           nodeCount={45}
@@ -260,7 +260,7 @@ export default function StageView() {
       </div>
 
       {/* Stage content */}
-      <div id="stage-content" className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-6 pt-6 pb-4 min-h-0 overflow-y-auto">
+      <div id="stage-content" className="max-w-3xl w-full mx-auto px-6 pt-6 pb-4">
         {/* Header with breadcrumb + start over */}
         <div id="stage-header" className="flex items-center justify-between mb-2">
           <BreadcrumbTrail topics={visitedTopics} />
