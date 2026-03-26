@@ -150,24 +150,23 @@ export default function JobEvaluator() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12"
+      className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-12 overflow-y-auto max-h-[calc(100dvh-5rem)]"
     >
       {/* Header */}
-      <div className="text-center mb-6 sm:mb-8">
+      <div className="text-center mb-3 sm:mb-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-turquoise/10 mb-4"
+          className="hidden sm:inline-flex items-center justify-center w-12 h-12 rounded-full bg-turquoise/10 mb-4"
         >
           <span className="text-2xl">🎯</span>
         </motion.div>
-        <h2 className="font-serif text-2xl sm:text-3xl font-bold text-charcoal dark:text-cream mb-2">
-          Job Fit Evaluation
+        <h2 className="font-serif text-xl sm:text-3xl font-bold text-charcoal dark:text-cream mb-1 sm:mb-2">
+          🎯 Job Fit Evaluation
         </h2>
-        <p className="font-sans text-sm sm:text-base text-charcoal/60 dark:text-dark-muted max-w-lg mx-auto">
-          Paste a job description or upload a file. Reader will give you an honest assessment
-          of whether James is a good fit — strengths, gaps, and all.
+        <p className="font-sans text-xs sm:text-base text-charcoal/60 dark:text-dark-muted max-w-lg mx-auto">
+          Paste a job description or upload a file for an honest fit assessment.
         </p>
       </div>
 
@@ -187,10 +186,10 @@ export default function JobEvaluator() {
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
                 placeholder="Paste the job description here..."
-                rows={8}
+                rows={4}
                 disabled={!!selectedFile}
                 className={`w-full rounded-xl border px-4 py-3 text-sm font-sans leading-relaxed
-                  resize-y min-h-[160px] max-h-[400px] outline-none transition-all duration-200
+                  resize-y min-h-[100px] sm:min-h-[160px] max-h-[40vh] outline-none transition-all duration-200
                   bg-white dark:bg-dark-surface
                   text-charcoal dark:text-dark-text
                   placeholder:text-charcoal/40 dark:placeholder:text-dark-muted/60
@@ -209,14 +208,14 @@ export default function JobEvaluator() {
             </div>
 
             {/* Divider */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               <div className="h-px flex-1 bg-stone-dark/20 dark:bg-dark-border/20" />
               <span className="text-xs font-sans text-charcoal/40 dark:text-dark-muted/50">or</span>
               <div className="h-px flex-1 bg-stone-dark/20 dark:bg-dark-border/20" />
             </div>
 
             {/* File Upload */}
-            <div className="mb-6">
+            <div className="mb-4">
               <input
                 ref={fileInputRef}
                 type="file"
