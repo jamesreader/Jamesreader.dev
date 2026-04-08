@@ -11,7 +11,6 @@ const links = [
   { href: '/work', label: 'Work' },
   { href: '/blog', label: 'Blog' },
   { href: '/about', label: 'About' },
-  { href: '/lab', label: 'Lab' },
 ];
 
 export default function Nav() {

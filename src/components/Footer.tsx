@@ -25,7 +25,6 @@ export default function Footer() {
                 { href: '/work', label: 'Work' },
                 { href: '/blog', label: 'Blog' },
                 { href: '/about', label: 'About' },
-                { href: '/lab', label: 'Lab' },
               ].map(({ href, label }) => (
                 <Link key={href} href={href} className="text-sm text-charcoal/60 dark:text-dark-muted hover:text-turquoise transition-colors">
                   {label}
