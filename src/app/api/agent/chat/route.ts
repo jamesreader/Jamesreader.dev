@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-const BACKEND_URL = process.env.AGENT_BACKEND_URL || 'http://daedalus:8100';
+const BACKEND_URL = process.env.AGENT_BACKEND_URL || 'http://100.112.124.72:8100';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
       return new Response(errText, { status: res.status });
     }
 
-    // Passthrough the SSE stream — content blocks are parsed client-side
     return new Response(res.body, {
       status: 200,
       headers: {
