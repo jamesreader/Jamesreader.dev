@@ -10,7 +10,7 @@ Solutions Architect and AI Infrastructure Engineer based in Moriarty, New Mexico
 
 ## The Real Version
 
-I didn't take the traditional path into tech. No Stanford CS degree, no FAANG pedigree. I started in the trenches — help desk, cable pulling, server rooms that doubled as closets. Worked my way through community college while fixing computers, earned my AAS in Computer Technology from NMSU (Outstanding Graduate Award, 3.6 GPA), plus a CS degree. Taught as an adjunct professor at NMSU for two years.
+I didn't take the traditional path into tech. No Stanford CS degree, no FAANG pedigree. I started in the trenches — help desk, cable pulling, server rooms that doubled as closets. Worked my way through community college while fixing computers, earned my Associate of Applied Science (AAS) in Computer Science from NMSU (Outstanding Graduate Award, 3.6 GPA). Taught as an adjunct professor at NMSU for two years.
 
 Then the real education started: MSP work at DocTech where you learn to be a full-stack generalist because you have no choice. IT management at IPS where I architected virtualized infrastructure and cloud integrations. Running my own consulting business (Reader & Associates) since 2014 because there's always someone who needs help and is willing to pay for competence.
 
@@ -31,8 +31,7 @@ Every engagement follows the same pattern: understand the domain, identify where
 ## Certifications & Education
 
 - **CISSP** — Certified Information Systems Security Professional
-- **AAS Computer Technology** — New Mexico State University (Outstanding Graduate Award, 3.6 GPA)
-- **BS Computer Science** — New Mexico State University
+- **AAS, Computer Science** — New Mexico State University (Outstanding Graduate Award, 3.6 GPA). Associate of Applied Science degree; Computer Science major.
 
 ## Career Timeline
 

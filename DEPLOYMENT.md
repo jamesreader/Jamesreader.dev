@@ -37,21 +37,32 @@ git push -u origin main
    - Monitor build logs
 
 ### 3. DNS Configuration
-Point `jamesreader.dev` A record to Coolify server IP: `5.78.144.84`
+`jamesreader.dev` is proxied through Cloudflare (orange cloud). The origin A record points at the Coolify host on forge (`5.78.144.84`). Coolify's internal Traefik handles the SSL termination and routes the hostname to the jamesreader-dev container. To move the site to a different origin, update the Cloudflare A record to the new IP and let Traefik pick up the hostname from the Coolify app config.
 
 ## Project Structure
 ```
 jamesreader-dev/
 ├── src/
-│   ├── app/           # Next.js App Router pages
-│   │   ├── page.tsx   # Home page with animated background
-│   │   ├── about/     # About page with timeline
-│   │   ├── projects/  # Projects showcase  
-│   │   ├── blog/      # Blog (ready for Sanity CMS)
-│   │   └── contact/   # Contact page
-│   └── components/    # Reusable components
-├── Dockerfile         # Production container setup
-└── tailwind.config.js # Custom color scheme
+│   ├── app/             # Next.js App Router pages
+│   │   ├── page.tsx     # Home page with animated background
+│   │   ├── about/       # About page with timeline
+│   │   ├── work/        # Work / projects showcase
+│   │   ├── blog/        # Blog, sourced from src/lib/blog-posts.ts
+│   │   ├── changelog/   # Changelog, sourced from content/changelog/*.mdx
+│   │   ├── lab/         # Lab / experiments
+│   │   └── api/         # Route handlers (agent proxy, annotate, evaluate, etc.)
+│   ├── components/      # Reusable components
+│   ├── lib/             # Data and helpers (blog-posts.ts, changelog.ts)
+│   └── context/         # React providers (AgentProvider, etc.)
+├── content/             # TinaCMS-managed content
+│   ├── projects/        # Project case studies (MDX)
+│   ├── experience/      # Bio, consulting copy (MD)
+│   ├── philosophy/      # Philosophy / principles (MD)
+│   └── changelog/       # Changelog entries (MDX)
+├── tina/                # TinaCMS config
+├── scripts/             # Build / ops helpers (generate-changelog-drafts.ts)
+├── Dockerfile           # Production container setup
+└── tailwind.config.js   # Custom color scheme
 ```
 
 ## Design Features
@@ -67,14 +78,14 @@ jamesreader-dev/
 - **TypeScript** for type safety
 - **Tailwind CSS** with custom colors
 - **React Icons** for consistent iconography
+- **TinaCMS** for `content/` (projects, experience, philosophy, changelog)
+- **react-markdown + remark-gfm** for MDX body rendering
 - **Standalone build** for Docker deployment
 
-## Blog Integration (Next Phase)
-The blog section is ready for Sanity CMS integration:
-1. Create new Sanity project: `npx sanity@latest init`
-2. Configure blog schema (title, slug, body, categories)  
-3. Add environment variables for Sanity project ID and API token
-4. Replace placeholder posts with live Sanity data
+## Content Sources
+- **Blog**: hardcoded array in `src/lib/blog-posts.ts`. Add new entries there; the `/blog` route reads from it directly.
+- **Changelog**: `content/changelog/*.mdx` with frontmatter (`date`, `title`, `summary`, `categories`, `published`). Drafts (`published: false`) are hidden from the public list; flip to `true` when ready to publish. Use `npx tsx scripts/generate-changelog-drafts.ts` to auto-ingest recent git commits as draft entries for curation.
+- **Projects / Experience / Philosophy**: `content/<collection>/*.md(x)` edited through the TinaCMS admin at `/admin`.
 
 ## Content Notes
 - **No em dashes** anywhere in copy (per James's preference)
