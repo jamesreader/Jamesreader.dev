@@ -86,6 +86,62 @@ export default defineConfig({
           },
         },
       },
+      {
+        name: 'changelog',
+        label: 'Changelog',
+        path: 'content/changelog',
+        format: 'mdx',
+        fields: [
+          {
+            type: 'datetime',
+            name: 'date',
+            label: 'Date',
+            required: true,
+          },
+          {
+            type: 'string',
+            name: 'title',
+            label: 'Title',
+            isTitle: true,
+            required: true,
+          },
+          {
+            type: 'string',
+            name: 'summary',
+            label: 'Summary',
+            ui: {
+              component: 'textarea',
+            },
+          },
+          {
+            type: 'string',
+            name: 'categories',
+            label: 'Categories',
+            list: true,
+            options: [
+              { value: 'feat', label: 'Feature' },
+              { value: 'fix', label: 'Fix' },
+              { value: 'infra', label: 'Infrastructure' },
+              { value: 'content', label: 'Content' },
+              { value: 'meta', label: 'Meta' },
+            ],
+          },
+          {
+            type: 'boolean',
+            name: 'published',
+            label: 'Published',
+          },
+          {
+            type: 'rich-text',
+            name: 'body',
+            label: 'Body',
+            isBody: true,
+          },
+        ],
+        ui: {
+          router: () => '/changelog',
+        },
+      },
     ],
   },
 });

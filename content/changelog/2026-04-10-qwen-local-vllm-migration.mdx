@@ -1,0 +1,15 @@
+---
+date: 2026-04-10
+title: Moved Reader to fully-local inference on Qwen3.5-35B-A3B
+summary: The site's AI agent no longer calls a cloud API for chat. All inference now runs on my NVIDIA DGX Spark via vLLM, fronted by LiteLLM for routing and chat-template config.
+categories: [infra, feat]
+published: true
+---
+
+Reader now answers you with a **Qwen3.5-35B-A3B MoE model**, AWQ-quantized, served by **vLLM** on my DGX Spark and fronted by a local **LiteLLM** proxy. Zero cloud dependency for the chat path.
+
+The A3B part is where the speed comes from: it's a 35-billion-parameter sparse mixture-of-experts, but only ~3B parameters are active per token. For each response you read, the model is doing roughly the compute of a 3B dense model — which is why it streams noticeably faster than the Gemma 27B setup it replaced, and faster than the cloud Opus calls I was routing through before.
+
+LiteLLM sits in front as a thin routing layer so I can swap the underlying vLLM process out, or fall back to a cloud model, without touching agent code. The LiteLLM config also disables Qwen's visible thinking mode (`enable_thinking: false`) — otherwise the model wraps answers in a "Thinking Process" preamble that's interesting for debugging but noise for visitors.
+
+Cost per visitor interaction: effectively zero. The silicon is already running.

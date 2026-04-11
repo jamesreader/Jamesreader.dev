@@ -1,0 +1,13 @@
+---
+date: 2026-04-10
+title: Added this changelog
+summary: The site now has a changelog at /changelog — partly as a record of what's shipping, partly as live evidence that the stack is actually being used.
+categories: [meta, feat]
+published: true
+---
+
+A portfolio that claims to ship should be able to show you what it's shipped. This page is driven by MDX files in `content/changelog/`, edited through TinaCMS, with an auto-draft script that reads git commit history across the relevant repos and emits draft entries for curation before publishing. Low-friction for me, honest for you.
+
+If you're looking at the first few entries and thinking "those are from tonight" — yes, they are. The first entry is the Qwen migration that made Reader fast enough to feel conversational. The second is the bug fix that made Reader actually render structured answers. This one is the meta-entry explaining why they're here.
+
+The plan: new entries get written in a James-voice rewrite of what actually changed. Pure git-log commit messages go in the drafts folder; the curated published versions read like a normal changelog, not a commit dump.

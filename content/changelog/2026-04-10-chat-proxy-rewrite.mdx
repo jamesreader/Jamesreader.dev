@@ -1,0 +1,13 @@
+---
+date: 2026-04-10
+title: Rewrote the chat proxy route, killed a markdown-eating filter
+summary: The Next.js → reader-agent proxy had quietly drifted to the wrong endpoint and was running a filter that stripped any response starting with a heading, numbered list, or bold text. Both fixed.
+categories: [fix, infra]
+published: true
+---
+
+The Next.js API route for chat was proxying to the wrong backend path, and was running a legacy SSE filter that inspected each streamed chunk for patterns like `^##`, `^\d+\.\s`, and `^\s*\*\*` — meaning any response that opened with a markdown heading, numbered list, or bolded phrase was being dropped before it reached the browser. The filter was left over from an earlier model that emitted visible "Thinking Process" prefixes; once the underlying LLM stopped doing that, the filter was pure downside.
+
+Both are gone. The proxy is now a clean passthrough of reader-agent's SSE stream, so everything Reader writes — headings, bolded terms, numbered steps, the whole markdown vocabulary — reaches the UI as-is and gets rendered properly by the existing react-markdown layer.
+
+Side effect: Reader can now actually answer "what's your architecture?" with structured bullet lists and headers, instead of silently returning empty responses.
