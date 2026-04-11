@@ -3,7 +3,7 @@ name: "Municipal AI Infrastructure"
 slug: edgewood-ai
 status: in-development
 category: government
-stack: [NVIDIA DGX Spark, Kubernetes, Elasticsearch, RAG, Python]
+stack: [Kubernetes, Elasticsearch, Multimodal RAG, Python, NVIDIA Enterprise RAG Blueprint]
 hero_stat: { label: "Sector", value: "Local Government" }
 audience_tags: [consulting, technical, personal]
 order: 3
@@ -19,7 +19,7 @@ Meanwhile, the IT department — the one team that could solve this — is treat
 
 A multimodal AI system that ingests, understands, and makes queryable the entire document archive of a municipal government. Not just text search — true understanding of tables, charts, scanned forms, handwritten notes, and the relationships between documents.
 
-Built on NVIDIA's Enterprise RAG Blueprint, running locally on a DGX Spark. No data leaves the building — critical for government and law enforcement use cases.
+The current pilot runs on cloud infrastructure while the team validates the use cases and the budget justification for on-premises hardware. The target architecture, once the local deployment is greenlit, keeps all data inside the building — critical for government and law enforcement use cases.
 
 ## Key Capabilities
 
@@ -35,7 +35,7 @@ This isn't a tech demo — it's the future of how small governments operate. The
 
 ## The Infrastructure
 
-Running on a locally-hosted NVIDIA DGX Spark (128GB unified memory, GB10 GPU) behind the municipal firewall. Kubernetes (k3s) orchestration for the processing pipeline. Elasticsearch for full-text search alongside vector search for semantic queries. The entire stack is air-gappable if needed.
+Currently cloud-hosted for the active pilot, with a local, air-gappable deployment planned once the business case is funded. The target architecture uses Kubernetes (k3s) orchestration for the processing pipeline and Elasticsearch for full-text search alongside vector search for semantic queries, keeping all data inside the municipal boundary when local hardware comes online.
 
 ## What This Demonstrates
 

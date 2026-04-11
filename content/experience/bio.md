@@ -20,7 +20,7 @@ Now I'm the IT Director for a small New Mexico municipality, which sounds like a
 
 The through-line of my career is building things that solve real problems for real people — not theoretical problems for venture capitalists. A budgeting app for people who can't afford YNAB. An AI bid pipeline for a forestry contractor who was leaving money on the table. A document intelligence system for a government office drowning in paper.
 
-I run serious AI infrastructure: an NVIDIA DGX Spark running 122-billion parameter models, Kubernetes clusters, custom RAG pipelines. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
+I run serious AI infrastructure: an NVIDIA DGX Spark running a Qwen3.5-35B sparse MoE model via vLLM and LiteLLM, Kubernetes clusters, custom RAG pipelines. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
 
 ## The Consulting Angle
 
