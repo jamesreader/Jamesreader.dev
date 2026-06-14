@@ -304,6 +304,9 @@ export function useConversation() {
       agent.addMessage(agentMsg);
       agent.setIsStreaming(true);
 
+      const fetchController = new AbortController();
+      const fetchTimeoutId = setTimeout(() => fetchController.abort(), 90_000); // 90s total
+
       try {
         const res = await fetch('/api/agent/chat', {
           method: 'POST',
@@ -313,7 +316,9 @@ export function useConversation() {
             session_id: agent.sessionId,
             intent: agent.intent,
           }),
+          signal: fetchController.signal,
         });
+        clearTimeout(fetchTimeoutId);
 
         if (!res.ok || !res.body) {
           agent.updateLastAgentMessage('Sorry, I had trouble connecting. Please try again.');
@@ -325,9 +330,24 @@ export function useConversation() {
         const decoder = new TextDecoder();
         let accumulated = '';
         let buffer = '';
+        let readTimedOut = false;
+
+        // Per-read idle timeout — aborts the stream if no data for 45s
+        const withReadTimeout = async (): Promise<{ value: Uint8Array | undefined; done: boolean }> => {
+          return new Promise((resolve) => {
+            const timeoutId = setTimeout(() => {
+              readTimedOut = true;
+              resolve({ value: undefined, done: true });
+            }, 45_000);
+            reader.read().then((result) => {
+              clearTimeout(timeoutId);
+              resolve(result);
+            });
+          });
+        };
 
         while (true) {
-          const { done, value } = await reader.read();
+          const { done, value } = await withReadTimeout();
           if (done) break;
 
           buffer += decoder.decode(value, { stream: true });
@@ -359,12 +379,19 @@ export function useConversation() {
           }
         }
 
-        if (!accumulated) {
+        if (readTimedOut) {
+          agent.updateLastAgentMessage("The backend stopped responding mid-stream. Please try again.");
+        } else if (!accumulated) {
           agent.updateLastAgentMessage("I didn't get a response. Please try again.");
         }
-      } catch {
-        agent.updateLastAgentMessage('Connection lost. Please try again.');
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          agent.updateLastAgentMessage('The request timed out. Please try again.');
+        } else {
+          agent.updateLastAgentMessage('Connection lost. Please try again.');
+        }
       } finally {
+        clearTimeout(fetchTimeoutId);
         agent.setIsStreaming(false);
       }
     },

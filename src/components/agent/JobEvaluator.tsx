@@ -60,6 +60,9 @@ export default function JobEvaluator() {
     setEvaluation('');
     setError(null);
 
+    const fetchController = new AbortController();
+    const fetchTimeoutId = setTimeout(() => fetchController.abort(), 90_000);
+
     try {
       let res: Response;
 
@@ -72,6 +75,7 @@ export default function JobEvaluator() {
         res = await fetch('/api/agent/evaluate', {
           method: 'POST',
           body: formData,
+          signal: fetchController.signal,
         });
       } else {
         // JSON text path
@@ -82,8 +86,10 @@ export default function JobEvaluator() {
             job_description: jobDescription.trim(),
             session_id: sessionId,
           }),
+          signal: fetchController.signal,
         });
       }
+      clearTimeout(fetchTimeoutId);
 
       if (!res.ok || !res.body) {
         setError('Failed to reach the evaluation service. Please try again.');
@@ -95,9 +101,24 @@ export default function JobEvaluator() {
       const decoder = new TextDecoder();
       let accumulated = '';
       let buffer = '';
+      let readTimedOut = false;
+
+      // Per-read idle timeout — aborts the stream if no data for 45s
+      const withReadTimeout = async (): Promise<{ value: Uint8Array | undefined; done: boolean }> => {
+        return new Promise((resolve) => {
+          const timeoutId = setTimeout(() => {
+            readTimedOut = true;
+            resolve({ value: undefined, done: true });
+          }, 45_000);
+          reader.read().then((result) => {
+            clearTimeout(timeoutId);
+            resolve(result);
+          });
+        });
+      };
 
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value } = await withReadTimeout();
         if (done) break;
 
         buffer += decoder.decode(value, { stream: true });
@@ -121,6 +142,12 @@ export default function JobEvaluator() {
         }
       }
 
+      if (readTimedOut) {
+        setError('The evaluation service stopped responding. Please try again.');
+        setPhase('input');
+        return;
+      }
+
       if (!accumulated) {
         setError('No evaluation received. Please try again.');
         setPhase('input');
@@ -128,9 +155,15 @@ export default function JobEvaluator() {
       }
 
       setPhase('complete');
-    } catch {
-      setError('Connection lost. Please try again.');
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        setError('The request timed out. Please try again.');
+      } else {
+        setError('Connection lost. Please try again.');
+      }
       setPhase('input');
+    } finally {
+      clearTimeout(fetchTimeoutId);
     }
   }, [jobDescription, selectedFile, sessionId]);
 
