@@ -10,7 +10,7 @@ const timeline = [
     period: '2024 - Present',
     role: 'IT Director',
     org: 'Town of Edgewood, NM',
-    description: 'Leading the technology strategy for a growing New Mexico municipality. Modernizing government IT from the ground up.',
+    description: "Running IT for a growing New Mexico municipality with a two-person team: eight sites and a police department that never closes. Building most of the town's internal tools in-house: onboarding and offboarding automation, the public records portal, and the AI assistant on the town website.",
   },
   {
     period: '2021 - 2024',
@@ -26,12 +26,12 @@ const timeline = [
   },
   {
     period: '2014 - Present',
-    role: 'IT Consultant',
+    role: 'Managed IT & Web Development',
     org: 'Reader & Associates',
-    description: 'Running a consulting practice serving small businesses and government organizations across New Mexico. Network design, cloud migrations, and AI solutions.',
+    description: 'Running a managed IT and web development practice serving small businesses and government organizations across New Mexico. Network design, cloud migrations, web applications, and AI solutions.',
   },
   {
-    period: '2016 - 2018',
+    period: '2013 - 2015',
     role: 'Adjunct Professor',
     org: 'NMSU Grants',
     description: 'Teaching computer science courses. Bridging the gap between academic fundamentals and real-world IT practice.',
@@ -81,7 +81,7 @@ export default function AboutPage() {
                 That foundation matters. When I build AI systems now, I build them the way I build infrastructure: resilient, practical, and designed to work when nobody is watching.
               </p>
               <p>
-                I&apos;m currently the IT Director for the Town of Edgewood, New Mexico. Before that, I managed IT for International Protective Service, a global security provider operating across multiple countries. Before that, I was a systems engineer at an MSP, and I&apos;ve been running my own consulting practice since 2014. I also taught CS at NMSU Grants. Each role taught me something different about what technology owes the people who depend on it.
+                I&apos;m currently the IT Director for the Town of Edgewood, New Mexico. There are two of us, eight sites, and a police department that never closes, so I build most of our internal tools instead of buying them: onboarding and offboarding automation, a public records portal, and the AI assistant on the town website. Software that fits 70% of the process costs more than software that fits all of it. Before that, I managed IT for International Protective Service, a global security provider operating across multiple countries. Before that, I was a systems engineer at an MSP, and I&apos;ve been running my own consulting practice since 2014. I also taught CS at NMSU Grants. Each role taught me something different about what technology owes the people who depend on it.
               </p>
               <p>
                 Outside of work, I&apos;m building{' '}

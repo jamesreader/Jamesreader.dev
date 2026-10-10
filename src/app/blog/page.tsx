@@ -40,7 +40,7 @@ export default function BlogPage() {
                   </span>
                   <span className="text-charcoal/20 dark:text-dark-muted/30">/</span>
                   <span className="font-sans text-xs text-charcoal/40 dark:text-dark-muted">
-                    {post.date}
+                    {post.displayDate}
                   </span>
                   <span className="text-charcoal/20 dark:text-dark-muted/30">/</span>
                   <span className="font-sans text-xs text-charcoal/40 dark:text-dark-muted">

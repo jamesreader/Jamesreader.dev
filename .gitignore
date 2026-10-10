@@ -32,9 +32,9 @@ yarn-error.log*
 # Vercel
 .vercel
 
-# Tina CMS
-tina/__generated__
 
 # Typescript
 *.tsbuildinfo
 next-env.d.ts
+# Local tooling
+.claude/

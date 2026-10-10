@@ -17,16 +17,16 @@ Most budgeting apps are either too simple (glorified spreadsheets) or too expens
 
 ## The Solution
 
-Meridian Money is envelope budgeting done right — automatic bank sync via Stripe Financial Connections, future bill projection, debt payoff tools, and an optional AI financial coach called Plutus. Starting at $5/month for budgeting, it's positioned as the affordable, privacy-respecting alternative to YNAB.
+Meridian Money is envelope budgeting done right — automatic bank sync via Stripe Financial Connections, future bill projection, debt payoff tools, and Plutus, an AI financial coach. Starting at $5/month for budgeting, it's positioned as the affordable, privacy-respecting alternative to YNAB.
 
-The key differentiator isn't just price — it's philosophy. Meridian treats your financial data with respect. No selling to third parties, no data mining. Bank-level encryption. And Meridian is **AI-optional, not AI-first**: the core budgeting experience works completely without AI. If you want AI in the loop, Plutus is an add-on, and power users can connect their own tools via MCP. The budgeting is the product; AI is a layer you can turn on or off.
+The key differentiator isn't just price — it's philosophy. Meridian treats your financial data with respect. No selling to third parties, no data mining. Bank-level encryption.
 
 ## What Makes It Different
 
 - **Envelope budgeting with bank sync** — The proven method, modernized. Transactions flow in automatically, you assign them to envelopes.
 - **$5/month vs $15/month** — Same core features as YNAB at a third of the price. YNAB import tool for easy switching.
-- **Plutus AI Coach ($10/month add-on)** — A real AI financial assistant that knows your budget, your goals, and your spending patterns. Not a chatbot with canned responses — Plutus understands your actual financial context and gives personalized guidance. Completely optional; the base product is fully usable without it.
-- **MCP Server (Bring Your Own AI)** — For power users and AI enthusiasts, Meridian exposes an MCP (Model Context Protocol) server so you can connect your own AI tools — Claude, ChatGPT, or any MCP-compatible client — directly to your financial data. No lock-in, no captive AI requirement.
+- **Plutus AI Coach ($10/month add-on)** — A real AI financial assistant that knows your budget, your goals, and your spending patterns. Not a chatbot with canned responses — Plutus understands your actual financial context and gives personalized guidance.
+- **MCP Server (Bring Your Own AI)** — For power users and AI enthusiasts, Meridian exposes an MCP (Model Context Protocol) server so you can connect your own AI tools — Claude, ChatGPT, or any MCP-compatible client — directly to your financial data. No lock-in.
 - **Partner budgeting** — "Yours, Mine, Ours" approach for couples. Link budgets without merging them. Three-tier visibility so each partner controls what's shared.
 - **Velocity banking module (planned)** — For advanced users doing margin-based cash flow optimization. No other budgeting tool handles this.
 - **Arsenal debt payoff** — Snowball and avalanche strategies with visual progress tracking.
@@ -49,4 +49,4 @@ Live in production with real users. Plutus AI coach is live. MCP server is live.
 
 ## The Business Case
 
-The personal finance app market is dominated by tools that are either free (and sell your data) or expensive (and justify it with features most people don't use). Meridian sits in the sweet spot: affordable, privacy-respecting, and genuinely useful — with AI-optional positioning that doesn't force the feature on users who don't want it. Plutus and the MCP server are the upgrade path for users who *do* want AI in the loop, without ever making AI a requirement to get value from the product.
+The personal finance app market is dominated by tools that are either free (and sell your data) or expensive (and justify it with features most people don't use). Meridian sits in the sweet spot: affordable, privacy-respecting, and genuinely useful. Meridian is **AI-optional, not AI-first**: the core budgeting experience works completely without AI. Plutus and the MCP server are the upgrade path for users who want AI in the loop — either use the built-in Plutus coach, bring your own AI via MCP, or use Meridian with no AI at all. The budgeting is the product; AI is a layer you can turn on or off.

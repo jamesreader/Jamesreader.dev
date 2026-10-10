@@ -19,7 +19,7 @@ Meanwhile, the IT department — the one team that could solve this — is treat
 
 A multimodal AI system that ingests, understands, and makes queryable the entire document archive of a municipal government. Not just text search — true understanding of tables, charts, scanned forms, handwritten notes, and the relationships between documents.
 
-The current pilot runs on cloud infrastructure while the team validates the use cases and the budget justification for on-premises hardware. The target architecture, once the local deployment is greenlit, keeps all data inside the building — critical for government and law enforcement use cases.
+Edgewood's AI is local-first: it runs on the town's own hardware, a pair of mirrored NVIDIA DGX Sparks serving an open-weights model, with load balancing across the pair and session pinning so a conversation stays on one node. Anthropic's cloud models are a backstop for the occasional request the local cluster can't serve. Cloud use is gated by data classification: only information that's public or releasable under New Mexico's Inspection of Public Records Act (IPRA) can ever be processed in the cloud. Anything CJIS-sensitive, personnel-related, attorney-client privileged, or otherwise confidential never leaves town infrastructure.
 
 ## Key Capabilities
 
@@ -35,7 +35,7 @@ This isn't a tech demo — it's the future of how small governments operate. The
 
 ## The Infrastructure
 
-Currently cloud-hosted for the active pilot, with a local, air-gappable deployment planned once the business case is funded. The target architecture uses Kubernetes (k3s) orchestration for the processing pipeline and Elasticsearch for full-text search alongside vector search for semantic queries, keeping all data inside the municipal boundary when local hardware comes online.
+Inference is local-first, on mirrored DGX Sparks serving an open-weights model. Requests are load-balanced across both nodes, with session pinning so each conversation stays on the node that holds its context, and either node can carry the load if the other is down. If the local cluster can't serve a request, releasable workloads can fail over to Anthropic's cloud models. Cloud use is gated by data classification: only information that's public or releasable under New Mexico's Inspection of Public Records Act (IPRA) can ever be processed in the cloud. Anything CJIS-sensitive, personnel-related, attorney-client privileged, or otherwise confidential never leaves town infrastructure. The search and processing pipeline uses a k3s cluster on dedicated hardware for container orchestration of the search and processing pipeline — Elasticsearch for full-text search alongside vector search for semantic queries. Inference and orchestration are intentionally separated for reliability and resource isolation.
 
 ## What This Demonstrates
 

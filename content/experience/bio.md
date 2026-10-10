@@ -6,25 +6,29 @@ audience_tags: [consulting, technical, personal]
 
 ## The Short Version
 
-Solutions Architect and AI Infrastructure Engineer based in Moriarty, New Mexico. Currently IT Director for the Town of Edgewood while building AI-powered products and consulting for organizations that want to leverage AI without the enterprise price tag. CISSP certified. Building on a foundation of 20+ years in IT across government, MSP, and private sector.
+Solutions Architect and AI Infrastructure Engineer based in Moriarty, New Mexico. Currently IT Director for the Town of Edgewood while building AI-powered products and solutions for organizations that want to leverage AI without the enterprise price tag. CISSP certified. Building on a foundation of 14+ years in IT across government, MSP, and private sector.
 
 ## The Real Version
 
 I didn't take the traditional path into tech. No Stanford CS degree, no FAANG pedigree. I started in the trenches — help desk, cable pulling, server rooms that doubled as closets. Worked my way through community college while fixing computers, earned my Associate of Applied Science (AAS) in Computer Science from NMSU (Outstanding Graduate Award, 3.6 GPA). Taught as an adjunct professor at NMSU for two years.
 
-Then the real education started: MSP work at DocTech where you learn to be a full-stack generalist because you have no choice. IT management at IPS where I architected virtualized infrastructure and cloud integrations. Running my own consulting business (Reader & Associates) since 2014 because there's always someone who needs help and is willing to pay for competence.
+Then the real education started: MSP work at DocTech where you learn to be a full-stack generalist because you have no choice. IT management at IPS where I architected virtualized infrastructure and cloud integrations. Running my own managed IT services and web development shop (Reader & Associates) since 2014 because there's always someone who needs help and is willing to pay for competence.
 
 Now I'm the IT Director for a small New Mexico municipality, which sounds like a step sideways until you realize it's actually a masterclass in doing more with less. Tiny budget, massive scope, every technology decision lands on my desk. That constraint is what pushed me into AI — when you can't hire more people, you build systems that multiply the people you have.
+
+## What I Build at Edgewood
+
+At the Town of Edgewood, IT is two people covering eight sites, including a police department that never closes. Rather than buy software that fits the town's process 70% of the way, I build most of our internal tools and run them on hardware the town already owns. AI doing the grunt work on the code side made building faster than buying. The current lineup: employee onboarding and offboarding automation with equipment tracking (one intake form replaced a by-hand checklist across eight systems, and my IT Specialist runs it now), a central internal document platform, the public records portal at records.edgewood-nm.gov, internal IPRA fulfillment tools for the clerk, the AI assistant on edgewood-nm.gov, and small web apps that replace spreadsheets, like a bill tracker for Finance and a training-hours tracker for the police department.
 
 ## What I'm Building
 
 The through-line of my career is building things that solve real problems for real people — not theoretical problems for venture capitalists. A budgeting app for people who can't afford YNAB. An AI bid pipeline for a forestry contractor who was leaving money on the table. A document intelligence system for a government office drowning in paper.
 
-I run serious AI infrastructure: an NVIDIA DGX Spark running a Qwen3.5-35B sparse MoE model via vLLM and LiteLLM, Kubernetes clusters, custom RAG pipelines. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
+I run serious AI infrastructure: an NVIDIA DGX Spark serving a Qwen-family open-weight mixture-of-experts model via vLLM and LiteLLM, custom RAG pipelines, and a separate k3s cluster for container orchestration. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
 
-## The Consulting Angle
+## Building for Others
 
-My consulting work focuses on organizations that need AI capabilities but can't (or shouldn't) pay enterprise prices. Government agencies, small businesses, specialized contractors. I understand their constraints because I live them every day. When I tell a municipal client that their data doesn't need to leave their building, it's not a sales pitch — it's how I built my own systems.
+My work through Reader & Associates focuses on organizations that need AI capabilities and solid IT infrastructure but can't (or shouldn't) pay enterprise prices. Government agencies, small businesses, specialized contractors. I build managed IT solutions and web applications tailored to their actual needs — not cookie-cutter packages.
 
 Every engagement follows the same pattern: understand the domain, identify where AI creates genuine leverage (not where it sounds impressive), build the minimum viable solution, and iterate based on real usage. No 18-month implementation plans. No six-figure discovery phases. Build the thing, ship it, make it better.
 
@@ -33,10 +37,11 @@ Every engagement follows the same pattern: understand the domain, identify where
 - **CISSP** — Certified Information Systems Security Professional
 - **AAS, Computer Science** — New Mexico State University (Outstanding Graduate Award, 3.6 GPA). Associate of Applied Science degree; Computer Science major.
 
+
 ## Career Timeline
 
-- **Town of Edgewood** — IT Director / CISO (2024–Present)
-- **Reader & Associates** — IT Consultant (2014–Present, continuous)
+- **Town of Edgewood** — IT Director (2024–Present)
+- **Reader & Associates** — Managed IT & Web Development (2014–Present, continuous)
 - **International Protective Service** — IT Manager (2021–2024)
 - **DocTech** — Systems Engineer (2018–2021)
 - **NMSU** — Adjunct Professor (2013–2015)

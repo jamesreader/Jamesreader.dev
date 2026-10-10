@@ -3,7 +3,7 @@ name: "This Site — Reader"
 slug: jamesreader-dev
 status: active
 category: product
-stack: [Next.js, FastAPI, Qwen3.5 (local vLLM), LiteLLM, pgvector, ElevenLabs, Tailwind]
+stack: [Next.js, FastAPI, Qwen (local vLLM), LiteLLM, pgvector, ElevenLabs, Tailwind]
 demo_url: https://jamesreader.dev
 hero_stat: { label: "Powered by", value: "Self-hosted AI" }
 audience_tags: [consulting, technical, personal]
@@ -34,9 +34,9 @@ The agent provides contextual guidance as you explore — not as a chat bubble, 
 
 - **Frontend:** Next.js with dynamic rendering, Framer Motion animations, streaming responses
 - **Agent Backend:** FastAPI on NVIDIA DGX Spark, co-located with the LLM for zero-hop inference
-- **LLM:** Qwen3.5-35B-A3B (35B MoE, ~3B active parameters, AWQ quantized) served by vLLM and fronted by LiteLLM for routing and chat-template config
+- **LLM:** Qwen3.8-Flash-Next, an open-weight Qwen4-architecture preview: a 125B-parameter mixture-of-experts model with about 6B parameters active per token, NVFP4-quantized, served by vLLM and fronted by LiteLLM for routing and chat-template config (model current as of September 2026)
 - **RAG:** pgvector for semantic search across all knowledge base content
-- **Voice:** ElevenLabs with James's cloned voice for spoken interactions
+- **Voice:** ElevenLabs text-to-speech for voice interactions
 - **Cost:** Near-zero per visitor — all inference runs on self-hosted hardware
 
 ## What This Demonstrates

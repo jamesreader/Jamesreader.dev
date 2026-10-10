@@ -79,7 +79,7 @@ const allProjects: Project[] = [
       'Multimodal document understanding (text, tables, scanned docs)',
       'Elasticsearch-powered document search across 160K+ files',
       'AI-assisted document classification and retention scheduling',
-      'Privacy-first: all processing on local infrastructure',
+      'Local-first: on-prem inference with cloud failover',
     ],
     status: 'Active',
     relevance: { consulting: 8, technical: 7, personal: 6, exploring: 6, evaluating: 7 },

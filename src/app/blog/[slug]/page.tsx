@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getPostBySlug, getAllPosts } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export async function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -16,70 +18,46 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// Simple markdown-ish renderer — handles ## headers, paragraphs, 
-// backtick code, bold, and list items
-function renderContent(content: string) {
-  const blocks = content.split('\n\n');
-  
-  return blocks.map((block, i) => {
-    const trimmed = block.trim();
-    if (!trimmed) return null;
-
-    // ## Header
-    if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={i} className="font-serif text-2xl font-bold text-charcoal dark:text-cream mt-12 mb-4">
-          {trimmed.slice(3)}
-        </h2>
-      );
-    }
-
-    // ### Header
-    if (trimmed.startsWith('### ')) {
-      return (
-        <h3 key={i} className="font-serif text-xl font-bold text-charcoal dark:text-cream mt-8 mb-3">
-          {trimmed.slice(4)}
-        </h3>
-      );
-    }
-
-    // List items (lines starting with - or number.)
-    const lines = trimmed.split('\n');
-    const isListBlock = lines.every(l => /^(\d+\.\s|\-\s|\*\*[^*]+\*\*)/.test(l.trim()));
-    if (isListBlock) {
-      return (
-        <ul key={i} className="space-y-2 my-4">
-          {lines.map((line, j) => {
-            const text = line.replace(/^(\d+\.\s|\-\s)/, '').trim();
-            return (
-              <li key={j} className="flex items-start gap-3">
-                <span className="mt-2 w-1.5 h-1.5 bg-turquoise rounded-full flex-shrink-0" />
-                <span className="font-sans text-charcoal/70 dark:text-dark-muted leading-relaxed"
-                  dangerouslySetInnerHTML={{ 
-                    __html: text
-                      .replace(/`([^`]+)`/g, '<code class="text-sm bg-stone/30 dark:bg-dark-border/30 px-1.5 py-0.5 rounded font-mono">$1</code>')
-                      .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-charcoal dark:text-cream font-semibold">$1</strong>')
-                  }} 
-                />
-              </li>
-            );
-          })}
-        </ul>
-      );
-    }
-
-    // Regular paragraph with inline formatting
-    return (
-      <p key={i} className="font-sans text-charcoal/70 dark:text-dark-muted leading-relaxed my-4"
-        dangerouslySetInnerHTML={{
-          __html: trimmed
-            .replace(/`([^`]+)`/g, '<code class="text-sm bg-stone/30 dark:bg-dark-border/30 px-1.5 py-0.5 rounded font-mono">$1</code>')
-            .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-charcoal dark:text-cream font-semibold">$1</strong>')
-        }}
-      />
-    );
-  });
-}
+const markdownComponents: Components = {
+  h2: ({ children }) => (
+    <h2 className="font-serif text-2xl font-bold text-charcoal dark:text-cream mt-12 mb-4">{children}</h2>
+  ),
+  h3: ({ children }) => (
+    <h3 className="font-serif text-xl font-bold text-charcoal dark:text-cream mt-8 mb-3">{children}</h3>
+  ),
+  p: ({ children }) => (
+    <p className="font-sans text-charcoal/70 dark:text-dark-muted leading-relaxed my-4">{children}</p>
+  ),
+  a: ({ href, children }) => (
+    <a href={href} className="text-turquoise hover:underline">{children}</a>
+  ),
+  strong: ({ children }) => (
+    <strong className="text-charcoal dark:text-cream font-semibold">{children}</strong>
+  ),
+  ul: ({ children }) => <ul className="space-y-2 my-4">{children}</ul>,
+  ol: ({ children }) => (
+    <ol className="list-decimal pl-6 space-y-2 my-4 font-sans text-charcoal/70 dark:text-dark-muted marker:text-turquoise">{children}</ol>
+  ),
+  // Bulleted lists get the turquoise dot; inside an <ol> the dot hides and the number shows.
+  li: ({ children }) => (
+    <li className="flex items-start gap-3 [ol_&]:list-item [ol_&]:pl-1">
+      <span className="mt-2 w-1.5 h-1.5 bg-turquoise rounded-full flex-shrink-0 [ol_&]:hidden" />
+      <span className="font-sans text-charcoal/70 dark:text-dark-muted leading-relaxed">{children}</span>
+    </li>
+  ),
+  blockquote: ({ children }) => (
+    <blockquote className="my-6 border-l-2 border-turquoise pl-4 [&_p]:my-2 italic">{children}</blockquote>
+  ),
+  code: ({ children, className }) =>
+    className ? (
+      <code className={`${className} block overflow-x-auto text-sm`}>{children}</code>
+    ) : (
+      <code className="text-sm bg-stone/30 dark:bg-dark-border/30 px-1.5 py-0.5 rounded font-mono">{children}</code>
+    ),
+  pre: ({ children }) => (
+    <pre className="my-6 p-4 rounded bg-stone/30 dark:bg-dark-border/30 overflow-x-auto font-mono text-sm">{children}</pre>
+  ),
+};
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getPostBySlug(params.slug);
@@ -101,7 +79,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               </span>
               <span className="text-charcoal/20 dark:text-dark-muted/30">/</span>
               <span className="font-sans text-xs text-charcoal/40 dark:text-dark-muted">
-                {post.date}
+                {post.displayDate}
               </span>
               <span className="text-charcoal/20 dark:text-dark-muted/30">/</span>
               <span className="font-sans text-xs text-charcoal/40 dark:text-dark-muted">
@@ -121,7 +99,9 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
           {/* Content */}
           <div className="blog-content">
-            {renderContent(post.content)}
+            <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+              {post.content}
+            </ReactMarkdown>
           </div>
 
           {/* Footer */}

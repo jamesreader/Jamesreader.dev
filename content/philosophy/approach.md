@@ -6,7 +6,7 @@ audience_tags: [consulting, technical, personal]
 
 ## Security First, Not Security After
 
-Every variable is untrusted. Every query is parameterized. Every secret is an environment variable. Every endpoint is authenticated. This isn't a checklist I run at the end — it's how I think about code from the first line. Twenty years in IT, including government CISO responsibilities, means security isn't a feature I add. It's the foundation everything else sits on.
+Every variable is untrusted. Every query is parameterized. Every secret is an environment variable. Every endpoint is authenticated. This isn't a checklist I run at the end — it's how I think about code from the first line. Fourteen years in IT, including government cybersecurity responsibilities, means security isn't a feature I add. It's the foundation everything else sits on.
 
 ## Own Your Infrastructure, Own Your AI
 

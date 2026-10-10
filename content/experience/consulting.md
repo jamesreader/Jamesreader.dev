@@ -6,7 +6,7 @@ audience_tags: [consulting]
 
 ## How I Work
 
-I'm not a vendor selling a product. I'm a builder who understands your domain well enough to create something tailored. Every engagement follows the same pattern: understand the actual problem, identify where AI creates genuine leverage, build the minimum viable solution, and iterate based on real usage.
+I build and manage IT infrastructure and web applications for organizations that need real solutions, not vendor pitches. Every client gets something tailored to their actual workflow. Every engagement follows the same pattern: understand the actual problem, identify where AI creates genuine leverage, build the minimum viable solution, and iterate based on real usage.
 
 ## What I Build
 
@@ -16,27 +16,9 @@ I'm not a vendor selling a product. I'm a builder who understands your domain we
 
 **Practical automation.** The unglamorous but high-value work of automating repetitive processes. Email summarization. Document classification. Workflow triggers. The stuff that saves 30 minutes a day for every person on your team.
 
-## Engagement Models
+## Engagement Pricing
 
-### Discovery & Strategy (2-4 weeks)
-- Domain analysis and problem identification
-- AI feasibility assessment
-- Architecture planning and cost modeling
-- Delivered: Technical plan, ROI projections, implementation roadmap
-- Investment: $3,000 - $8,000
-
-### Build & Deploy (4-12 weeks)
-- Custom development of AI-powered solution
-- Infrastructure setup and optimization
-- User training and documentation
-- Delivered: Production-ready system, deployment guide, training materials
-- Investment: $8,000 - $25,000 depending on scope
-
-### Ongoing Partnership
-- Monthly system optimization and feature development
-- Knowledge base updates and model fine-tuning
-- Infrastructure monitoring and scaling
-- Investment: $1,000 - $3,000/month
+Every engagement is priced based on scope, timeline, and feature set. No cookie-cutter packages — each project gets a custom quote based on what you actually need built.
 
 ## Ideal Clients
 
