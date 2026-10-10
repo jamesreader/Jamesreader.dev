@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { isWorldName, type WorldName } from '@/components/world';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -11,6 +12,25 @@ export interface Message {
   role: 'user' | 'agent';
   content: string;
   timestamp: number;
+  /** World the answer belongs to (from the backend `world` SSE event, or inferred client-side). */
+  world?: WorldName;
+  /** Set when the stream failed; `content` keeps any partial answer (or the error text if none). */
+  error?: string;
+}
+
+/** Fields of a stored message that can be patched after creation. */
+export type MessagePatch = Partial<Pick<Message, 'world' | 'error' | 'content'>>;
+
+export interface SendOptions {
+  /** Intent to send with this message (use when setIntent was called in the same tick). */
+  intent?: Intent;
+  /** Replace the trailing user+agent exchange instead of appending (retry). */
+  replaceLast?: boolean;
+}
+
+export interface ConversationOptions {
+  /** Called as soon as the backend announces the answer's world (before the first text chunk). */
+  onWorld?: (world: WorldName) => void;
 }
 
 export interface PageDirective {
@@ -35,6 +55,8 @@ interface AgentContextValue extends AgentState {
   toggleOpen: () => void;
   addMessage: (msg: Message) => void;
   updateLastAgentMessage: (content: string) => void;
+  patchMessage: (id: string, patch: MessagePatch) => void;
+  removeTrailingExchange: () => void;
   setIsStreaming: (streaming: boolean) => void;
   setWelcomeMessage: (msg: string) => void;
   clearSession: () => void;
@@ -158,6 +180,29 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  // Patch fields of any stored message by id (world, error, …) & persist
+  const patchMessage = useCallback((id: string, patch: MessagePatch) => {
+    setConversationHistory((prev) => {
+      const idx = prev.findIndex((m) => m.id === id);
+      if (idx === -1) return prev;
+      const next = [...prev];
+      next[idx] = { ...prev[idx], ...patch };
+      safeSetItem(STORAGE_KEYS.history, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  // Drop the trailing user+agent exchange (used to retry a failed answer in place)
+  const removeTrailingExchange = useCallback(() => {
+    setConversationHistory((prev) => {
+      const n = prev.length;
+      if (n < 2 || prev[n - 1].role !== 'agent' || prev[n - 2].role !== 'user') return prev;
+      const next = prev.slice(0, -2);
+      safeSetItem(STORAGE_KEYS.history, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
   const clearSession = useCallback(() => {
@@ -256,6 +301,8 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     toggleOpen,
     addMessage,
     updateLastAgentMessage,
+    patchMessage,
+    removeTrailingExchange,
     setIsStreaming,
     setWelcomeMessage,
     clearSession,
@@ -278,12 +325,22 @@ export function useAgentContext(): AgentContextValue {
   return useAgent();
 }
 
-export function useConversation() {
+// Fallback texts the /api/agent/chat proxy emits as `text` events when the backend fails.
+const PROXY_FALLBACK_TEXTS = new Set([
+  'The backend is not responding with content. Please try again.',
+  "Sorry, I couldn't reach the backend. Please try again.",
+]);
+
+export function useConversation(options: ConversationOptions = {}) {
   const agent = useAgent();
+  const { onWorld } = options;
 
   const sendMessage = useCallback(
-    async (text: string) => {
+    async (text: string, sendOptions: SendOptions = {}) => {
       if (!text.trim() || agent.isStreaming) return;
+
+      if (sendOptions.replaceLast) agent.removeTrailingExchange();
+      const intentForRequest = sendOptions.intent ?? agent.intent;
 
       // Add user message
       const userMsg: Message = {
@@ -314,14 +371,16 @@ export function useConversation() {
           body: JSON.stringify({
             message: text.trim(),
             session_id: agent.sessionId,
-            intent: agent.intent,
+            intent: intentForRequest,
           }),
           signal: fetchController.signal,
         });
         clearTimeout(fetchTimeoutId);
 
         if (!res.ok || !res.body) {
-          agent.updateLastAgentMessage('Sorry, I had trouble connecting. Please try again.');
+          const msg = 'Sorry, I had trouble connecting. Please try again.';
+          agent.updateLastAgentMessage(msg);
+          agent.patchMessage(agentMsg.id, { error: msg });
           agent.setIsStreaming(false);
           return;
         }
@@ -331,6 +390,7 @@ export function useConversation() {
         let accumulated = '';
         let buffer = '';
         let readTimedOut = false;
+        let streamError: string | null = null;
 
         // Per-read idle timeout — aborts the stream if no data for 45s
         const withReadTimeout = async (): Promise<{ value: Uint8Array | undefined; done: boolean }> => {
@@ -366,6 +426,14 @@ export function useConversation() {
                 agent.updateLastAgentMessage(accumulated);
               } else if (parsed.type === 'meta' && parsed.session_id) {
                 agent.setSessionId(parsed.session_id);
+              } else if (parsed.type === 'world' && isWorldName(parsed.world)) {
+                agent.patchMessage(agentMsg.id, { world: parsed.world });
+                onWorld?.(parsed.world);
+              } else if (parsed.type === 'error') {
+                streamError =
+                  typeof parsed.content === 'string' && parsed.content
+                    ? parsed.content
+                    : 'Something went wrong while answering.';
               } else if (parsed.type === 'directive') {
                 // Execute page action
                 agent.executePageAction({
@@ -380,22 +448,30 @@ export function useConversation() {
         }
 
         if (readTimedOut) {
-          agent.updateLastAgentMessage("The backend stopped responding mid-stream. Please try again.");
-        } else if (!accumulated) {
-          agent.updateLastAgentMessage("I didn't get a response. Please try again.");
+          streamError = 'The backend stopped responding mid-stream. Please try again.';
+        } else if (!accumulated && !streamError) {
+          streamError = "I didn't get a response. Please try again.";
+        } else if (PROXY_FALLBACK_TEXTS.has(accumulated.trim())) {
+          streamError = accumulated.trim();
+          accumulated = '';
+        }
+        if (streamError) {
+          // Keep any partial answer; fall back to the error text when there is none.
+          agent.patchMessage(agentMsg.id, { error: streamError, content: accumulated || streamError });
         }
       } catch (err) {
-        if (err instanceof Error && err.name === 'AbortError') {
-          agent.updateLastAgentMessage('The request timed out. Please try again.');
-        } else {
-          agent.updateLastAgentMessage('Connection lost. Please try again.');
-        }
+        const msg =
+          err instanceof Error && err.name === 'AbortError'
+            ? 'The request timed out. Please try again.'
+            : 'Connection lost. Please try again.';
+        agent.updateLastAgentMessage(msg);
+        agent.patchMessage(agentMsg.id, { error: msg });
       } finally {
         clearTimeout(fetchTimeoutId);
         agent.setIsStreaming(false);
       }
     },
-    [agent],
+    [agent, onWorld],
   );
 
   const initSession = useCallback(

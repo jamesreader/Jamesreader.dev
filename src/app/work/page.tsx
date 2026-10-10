@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { WorldName } from '@/components/world';
 
 export const metadata: Metadata = {
   title: 'Work',
@@ -81,6 +82,14 @@ const projects = [
   },
 ];
 
+// Which world-engine scene each project section belongs to (observed as it crosses mid-viewport).
+const WORK_WORLD: Record<string, WorldName> = {
+  'meridian-money': 'envelopes',
+  smis: 'radar',
+  'edgewood-tools': 'mesa',
+  'local-ai': 'sparks',
+};
+
 export default function WorkPage() {
   return (
     <div id="page-work" className="py-16 md:py-24">
@@ -101,7 +110,7 @@ export default function WorkPage() {
         {/* Projects */}
         <div className="space-y-20">
           {projects.map((project, i) => (
-            <article key={project.id} id={project.id} className="scroll-mt-24">
+            <article key={project.id} id={project.id} data-world={WORK_WORLD[project.id]} className="scroll-mt-24">
               {/* Divider (not on first) */}
               {i > 0 && (
                 <div className="mb-12 border-t border-stone-dark/20 dark:border-dark-border/20" />

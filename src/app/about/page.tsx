@@ -95,7 +95,7 @@ export default function AboutPage() {
         </div>
 
         {/* Timeline */}
-        <div className="mb-20">
+        <div className="mb-20" data-world="strata">
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal dark:text-cream mb-10">
             Career
           </h2>
@@ -118,7 +118,7 @@ export default function AboutPage() {
         </div>
 
         {/* Skills */}
-        <div className="mb-20">
+        <div className="mb-20" data-world="blueprint">
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal dark:text-cream mb-10">
             What I work with
           </h2>

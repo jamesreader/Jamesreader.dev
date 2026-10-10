@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { WorldName } from '@/components/world';
 import Link from 'next/link';
 import { getPostBySlug, getAllPosts } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
@@ -59,6 +60,16 @@ const markdownComponents: Components = {
   ),
 };
 
+// World-engine scene for each blog category (undefined → no data-world attribute).
+const BLOG_CATEGORY_WORLD: Record<string, WorldName> = {
+  Infrastructure: 'sparks',
+  Government: 'mesa',
+  Product: 'envelopes',
+  AI: 'records',
+  Career: 'strata',
+  Tutorial: 'blueprint',
+};
+
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = getPostBySlug(params.slug);
   if (!post) notFound();
@@ -70,7 +81,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           ← Back to blog
         </Link>
 
-        <article>
+        <article data-world={BLOG_CATEGORY_WORLD[post.category]}>
           {/* Header */}
           <header className="mb-12">
             <div className="flex items-center gap-3 mb-4">

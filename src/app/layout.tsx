@@ -1,6 +1,7 @@
 import './globals.css';
 import { AgentProvider } from '@/context/AgentProvider';
 import LayoutShell from '@/components/LayoutShell';
+import { WorldProvider, WorldCanvas } from '@/components/world';
 
 export const metadata = {
   title: {
@@ -45,16 +46,20 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
       </head>
       <body data-version="2026.03.26.4" className="bg-cream dark:bg-dark-bg text-charcoal dark:text-dark-text antialiased">
-        <AgentProvider>
-          <LayoutShell>
-            {children}
-          </LayoutShell>
-        </AgentProvider>
+        <WorldProvider>
+          {/* The world: one fixed canvas behind all content (z-index -1, pointer-events none). */}
+          <WorldCanvas />
+          <AgentProvider>
+            <LayoutShell>
+              {children}
+            </LayoutShell>
+          </AgentProvider>
+        </WorldProvider>
       </body>
     </html>
   );
