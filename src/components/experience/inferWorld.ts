@@ -11,7 +11,9 @@ const RULES: Array<[RegExp, WorldName]> = [
   [/\bSMIS\b|\bSAM\.gov\b|\bfederal contract|\bopportunit(?:y|ies)\b/i, 'radar'],
   [/\bclassif(?:y|ies|ied|ication|ier)\b|\bconfidential\b|\breleasable\b|\bIPRA\b/i, 'intake'],
   [/\brecords?\b|\bordinances?\b|\bresolutions?\b|\bdocument platform\b|\bamend|\brepeal/i, 'records'],
-  [/\bDGX\b|\bSparks?\b|\blocal(?:-first)? (?:AI|model|hardware|inference)\b|\bon-?prem|\bvLLM\b|\bGPUs?\b|\bself-hosted\b/i, 'sparks'],
+  // The town's mirrored pair vs James's single home-lab Spark: the pair has its own vocabulary.
+  [/\bmirrored\b|\bsession[- ]pinn|\bload[- ]?balanc|\btwo (?:DGX )?Sparks\b|\bEdgewood'?s AI\b|\bfailover\b/i, 'sparks'],
+  [/\bDGX\b|\bSpark\b|\bhome ?lab\b|\blocal(?:-first)? (?:AI|model|hardware|inference)\b|\bvLLM\b|\bGPUs?\b|\bself-hosted\b/i, 'homelab'],
   [/\bjob description\b|\bthe role\b|\bcandidate\b/i, 'fit'],
   [/\bEdgewood\b|\bthe town\b|\bpolice department\b|\beight sites\b/i, 'mesa'],
   [/\bengagements?\b|\bconsult(?:ing|ant)?\b|\bscope\b|\bbuild (?:for|something)\b/i, 'blueprint'],

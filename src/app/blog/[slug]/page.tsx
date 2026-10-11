@@ -62,7 +62,7 @@ const markdownComponents: Components = {
 
 // World-engine scene for each blog category (undefined → no data-world attribute).
 const BLOG_CATEGORY_WORLD: Record<string, WorldName> = {
-  Infrastructure: 'sparks',
+  Infrastructure: 'homelab',
   Government: 'mesa',
   Product: 'envelopes',
   AI: 'records',

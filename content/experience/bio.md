@@ -24,7 +24,7 @@ At the Town of Edgewood, IT is two people covering eight sites, including a poli
 
 The through-line of my career is building things that solve real problems for real people — not theoretical problems for venture capitalists. A budgeting app for people who can't afford YNAB. An AI bid pipeline for a forestry contractor who was leaving money on the table. A document intelligence system for a government office drowning in paper.
 
-I run serious AI infrastructure: an NVIDIA DGX Spark serving a Qwen-family open-weight mixture-of-experts model via vLLM and LiteLLM, custom RAG pipelines, and a separate k3s cluster for container orchestration. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
+My home lab is where I experiment and learn, and it's what let me build the local AI system the Town of Edgewood now runs on. It's a single NVIDIA DGX Spark serving a Qwen-family open-weight mixture-of-experts model via vLLM and LiteLLM, custom RAG pipelines, and a separate k3s cluster for container orchestration. But the hardware is just the means. The end is always the same: make something useful, make it work, make it affordable.
 
 ## Building for Others
 

@@ -36,6 +36,10 @@ export const PALETTES: Record<WorldName, Record<Theme, Palette>> = {
     dark: { a: '#3fe0c5', b: '#bff8ee', c: '#27514c' },
     light: { a: '#0a9a84', b: '#05665a', c: '#8bb3ab' },
   },
+  homelab: {
+    dark: { a: '#5fb8ff', b: '#d6ecff', c: '#2b4560' },
+    light: { a: '#1f6fb8', b: '#0d4a85', c: '#93aac0' },
+  },
   envelopes: {
     dark: { a: '#6fdc8c', b: '#d2f7db', c: '#2f5a3d' },
     light: { a: '#2c9a4c', b: '#196630', c: '#90b39a' },

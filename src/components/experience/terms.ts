@@ -40,6 +40,12 @@ export const WORLD_TERMS: Record<WorldName, TermRule[]> = {
     { pattern: '\\breleasable\\b', tag: 'releasable' },
     { pattern: '\\brequests\\b', tag: 'requests' },
   ],
+  homelab: [
+    { pattern: '\\bDGX Spark\\b|\\bhome ?lab\\b', tag: 'spark' },
+    { pattern: '\\bthis site\\b', tag: 'public' },
+    { pattern: '\\bprivate (?:agents?|tenants?)\\b', tag: 'private' },
+    { pattern: '\\bcache[_ ]salt\\b|\\bsalted\\b|\\bprefix cache\\b', tag: 'salt' },
+  ],
   envelopes: [
     { pattern: '\\benvelopes?\\b', tag: 'envelopes' },
     { pattern: '\\$\\d+(?:\\.\\d\\d)?(?:\\s?(?:/|per)\\s?month)?|\\bdollars?\\b', tag: 'dollars' },

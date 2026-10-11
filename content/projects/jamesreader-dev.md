@@ -43,4 +43,4 @@ The agent provides contextual guidance as you explore — not as a chat bubble, 
 
 Full-stack AI product development: from concept to architecture to deployment. Self-hosted inference that scales without API bills. Voice cloning integration. RAG pipeline design. Frontend-AI integration patterns. And the taste to make it feel elegant, not gimmicky.
 
-The site runs on the same DGX Spark that powers the consulting demonstrations. One piece of hardware, multiple production workloads. That's the efficiency story that matters to organizations evaluating AI infrastructure investments.
+The site runs on a single DGX Spark in James's home lab, his own machine. The home lab is for experimentation and learning, and it's what allowed him to build the system the Town of Edgewood now runs on. It is not the town's hardware: the town's AI runs on a separate pair of mirrored Sparks that the town owns and James designed and built the deployment for. One piece of hardware, multiple production workloads. That's the efficiency story that matters to organizations evaluating AI infrastructure investments.

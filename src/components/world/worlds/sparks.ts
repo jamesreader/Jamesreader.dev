@@ -66,7 +66,7 @@ export const sparks: WorldBuilder = ({ N, wide, stage }) => {
     labels: () => [
       { x: boxes[0][0], y: by + bh / 2 + 22, text: 'spark a' },
       { x: boxes[1][0], y: by + bh / 2 + 22, text: 'spark b' },
-      { x: lbx, y: lby - 24, text: 'balancer' },
+      { x: lbx, y: lby - 24, text: wide ? 'town of edgewood · balancer' : 'edgewood · balancer' },
       { x: cloud[0], y: cloud[1] - 28, text: wide ? 'cloud · releasable only' : 'cloud' },
     ],
   };

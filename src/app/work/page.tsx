@@ -87,7 +87,7 @@ const WORK_WORLD: Record<string, WorldName> = {
   'meridian-money': 'envelopes',
   smis: 'radar',
   'edgewood-tools': 'mesa',
-  'local-ai': 'sparks',
+  'local-ai': 'homelab',
 };
 
 export default function WorkPage() {

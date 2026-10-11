@@ -6,7 +6,8 @@ export const WORLD_NAMES = [
   'mesa',          // Town of Edgewood: high-desert ridgelines, 8 pulsing sites (PD ring pulses faster)
   'records',       // document platform: pages + amends/repeals/cites arcs + orbiting entities
   'intake',        // classification on ingest: documents stream into a classifier, sorted into public / releasable / confidential lanes
-  'sparks',        // local AI: two mirrored nodes, balancer, session-pinned packets, fenced cloud lane
+  'sparks',        // Town of Edgewood's AI: two mirrored nodes, balancer, session-pinned packets, fenced cloud lane
+  'homelab',       // James's own stack: ONE DGX Spark shared by this site and his private agents (salted caches)
   'envelopes',     // Meridian Money: envelopes filling with falling dollars
   'radar',         // SMIS: radar sweep over a field, opportunity blips scored as the beam passes
   'strata',        // James's career: rock layers (2012 → now), each a role
@@ -44,6 +45,7 @@ export const FOCUS_TAGS: Record<WorldName, string[]> = {
   records: ['docs', 'links', 'amends', 'repeals', 'cites', 'entities'],
   intake: ['incoming', 'classifier', 'public', 'releasable', 'confidential'],
   sparks: ['sparks', 'balancer', 'pinning', 'cloud', 'releasable', 'requests'],
+  homelab: ['spark', 'public', 'private', 'salt'],
   envelopes: ['envelopes', 'dollars'],
   radar: ['sweep', 'blips', 'scored'],
   strata: ['layers', 'now'],
@@ -57,8 +59,8 @@ export const PROJECT_WORLD: Record<string, WorldName> = {
   'meridian-money': 'envelopes',
   smis: 'radar',
   'smis-ai-tool': 'radar',
-  'local-ai': 'sparks',
-  'jamesreader-dev': 'sparks',
+  'local-ai': 'homelab',
+  'jamesreader-dev': 'homelab',
   'edgewood-ai': 'records',
   'edgewood-tools': 'mesa',
 };
@@ -67,7 +69,7 @@ export const PROJECT_WORLD: Record<string, WorldName> = {
 export const INTENT_WORLD: Record<string, WorldName> = {
   exploring: 'constellation',
   consulting: 'blueprint',
-  technical: 'sparks',
+  technical: 'homelab',
   personal: 'strata',
   evaluating: 'fit',
 };
