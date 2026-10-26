@@ -7,7 +7,7 @@ date: 2026-04-10
 published: true
 ---
 
-> **Update, October 2026:** This post is a snapshot from April. The site has moved through several models since, and the A3B described here was retired in September. Reader now runs on a larger Qwen-family mixture-of-experts model. The lesson below about active parameters held up. The specific model didn't, which is the point of the router section.
+> **Update, October 2026:** This post is a snapshot from April. The site has moved through several models since, and the A3B described here was retired in September. Reader now runs on a larger Qwen-family mixture-of-experts model. The lesson below about active parameters held up. The specific model didn't, which is the point of the router section. One more correction: the cloud fallback described below is no longer configured. If the Spark is saturated today, Reader times out rather than routing to a hosted model.
 
 When I first set this infrastructure up, I picked the biggest model that would fit in 128GB of unified memory: Qwen3.5-122B at NVFP4 quantization. My reasoning was the obvious reasoning. Bigger model means smarter answers. I'd rather be a little slower and a lot better than fast and mediocre.
 
@@ -33,7 +33,7 @@ The difference was immediate. Not incremental. Chat responses start streaming wi
 
 ## Bonus Round: LiteLLM in Front
 
-I also stopped letting the agent code speak to vLLM directly. Instead I put a thin **LiteLLM** proxy in between, configured with the single local model as "default" and a cloud fallback ready to take over if the vLLM process ever dies. The LiteLLM config is also where I set `enable_thinking: false` at the chat-template layer, which means the model stops emitting the "Thinking Process" preamble at the *source* — no more client-side filter gymnastics.
+I also stopped letting the agent code speak to vLLM directly. Instead I put a thin **LiteLLM** proxy in between, configured with the single local model as "default" and a cloud fallback ready to take over if the vLLM process ever dies. *(October 2026: that fallback is no longer configured. When the Spark is saturated, Reader times out instead of falling back to a hosted model.)* The LiteLLM config is also where I set `enable_thinking: false` at the chat-template layer, which means the model stops emitting the "Thinking Process" preamble at the *source* — no more client-side filter gymnastics.
 
 That change killed a bug I hadn't realized I had: the client-side filter for "Thinking Process" patterns was also matching legitimate markdown responses that happened to start with a heading, a numbered list, or a bolded phrase. Reader had been silently dropping structured answers for weeks. Once I disabled thinking at the model level and removed the filter, Reader could finally respond with actual markdown — lists, headings, bold terms — and have them render properly.
 
