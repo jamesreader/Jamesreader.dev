@@ -1,0 +1,13 @@
+---
+date: 2026-09-04
+title: Reader now runs on Qwen3.8-Flash-Next
+summary: The site's AI agent moved to a larger Qwen-family mixture-of-experts model, still fully local on my DGX Spark.
+categories: [infra, feat]
+published: true
+---
+
+Reader now answers you with **Qwen3.8-Flash-Next**, an open-weight Qwen4-architecture preview: a 125B-parameter mixture-of-experts model with about 6B parameters active per token, NVFP4-quantized, served by **vLLM** and fronted by **LiteLLM**.
+
+Several models have come and gone since the April move to local inference. The swaps never touched agent code: Reader talks to a stable LiteLLM alias, so the model behind it can change without the site noticing.
+
+The public site gets its own LiteLLM alias with its own prefix-cache salt, so its requests can't be timed against the private tools sharing the same engine.
