@@ -63,6 +63,9 @@ export const PROJECT_WORLD: Record<string, WorldName> = {
   'jamesreader-dev': 'homelab',
   'edgewood-ai': 'records',
   'edgewood-tools': 'mesa',
+  millwright: 'blueprint',
+  caretaker: 'lattice',
+  'agent-hosting': 'intake',
 };
 
 /** Starting world for each Reader intent. */

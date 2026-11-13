@@ -1,0 +1,15 @@
+---
+date: 2026-10-18
+title: Faster answers from three lossless engine changes
+summary: Reader's model got about 7% faster end to end and half a second quicker on follow-ups, with output verified identical.
+categories: [infra, perf]
+published: true
+---
+
+Three changes shipped to the inference engine that serves Reader. Each one had to reproduce saved reference outputs before it was allowed to stay:
+
+- **Prefetched embedding lookups.** The one step per token where the GPU waited on the CPU now fetches what it needs in a single burst: about **7% faster** end to end.
+- **No recompute on follow-ups.** Follow-up turns stopped recomputing a block of the prompt they already had, so the first token arrives about **half a second sooner**.
+- **8-bit draft head.** The small draft model used for speculative decoding now runs its output layer in 8-bit: **4–9% faster** generation, with every drafted token still verified by the main model.
+
+Each change has a one-command rollback, and a watchdog with no AI in it checks speed and correctness every 15 minutes.

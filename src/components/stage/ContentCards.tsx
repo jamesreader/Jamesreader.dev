@@ -131,6 +131,52 @@ const PROJECTS: Record<string, ProjectData> = {
     link: 'https://records.edgewood-nm.gov',
     linkLabel: 'Visit the records portal',
   },
+  'millwright': {
+    id: "millwright",
+    title: "Millwright",
+    subtitle: "Describe an internal app; an agent assembles it safely",
+    category: "Agentic Platform",
+    description: "Internal tools run every organization, and AI agents can now build them from a prompt, but nobody can say for sure where the data goes. Millwright's agent builds only from prebuilt, security-reviewed components, and a deterministic data-flow gate traces every restricted value before anything deploys. A live canvas shows the architecture and the data moving through it.",
+    details: [
+      "Prompt to working app in one to one and a half minutes on a self-hosted model",
+      "A data-flow gate the agent can't talk its way past, covering renamed fields, custom code and later versions",
+      "The agent never holds keys: a separate broker makes every outbound call, and the builder sets every destination",
+      "Custom code runs in a WebAssembly sandbox with independent model review and builder confirmation",
+      "Hardened through five adversarial review rounds, each finding reproduced as a failing test before the fix",
+      "AGPL-3.0, early: product or open-source project still undecided",
+    ],
+    status: "Early Build",
+  },
+  'caretaker': {
+    id: "caretaker",
+    title: "Caretaker",
+    subtitle: "A maintenance agent that earns its authority",
+    category: "Autonomous Operations",
+    description: "Caretaker watches my servers, AI hardware, public sites and repositories. It fixes known problems on its own, keeps things patched, and proposes improvements, but it asks before deploying anything it isn't already trusted to do. Every approval I give joins a ledger, and that ledger is how its standing authority grows.",
+    details: [
+      "A patrol with no AI in it probes everything every 15 minutes",
+      "Fixes come only from a written playbook: one attempt per incident, then it escalates",
+      "Claude triages every few hours and runs a weekly security and improvement pass",
+      "Hard fences on money, outbound actions, the AI serving layer, reboots, credentials and data deletion",
+      "Reaches me by desktop notification, push or email depending on where I am; approvals need a one-time code",
+    ],
+    status: "In Production",
+  },
+  'agent-hosting': {
+    id: "agent-hosting",
+    title: "Agent-Operated Hosting",
+    subtitle: "Replacing cPanel and WHMCS with hosting my agent runs",
+    category: "Infrastructure",
+    description: "I host about a dozen sites, most for paying clients. I'm replacing the reseller stack with my own hosting, run by my AI agent on a server I already pay for, with Cloudflare at the edge and Stripe for billing. Every protection lives in code, not in the model's judgment. Leaving the old hosts retires about $1,200 a year in bills.",
+    details: [
+      "The agent acts only through a narrow control API: update, scan, snapshot, restore, quarantine, read logs",
+      "Healing means restoring a clean snapshot, not hand-patching",
+      "Site content is treated as hostile input: scanners first, then a quarantined model with no tools or memory",
+      "Sensors contain a compromised site in seconds with no AI involved",
+      "Performance matched with nginx FastCGI caching, Redis and Cloudflare; a live store is the pilot",
+    ],
+    status: "In Progress",
+  },
 };
 
 export function ProjectCard({ projectId, expanded = false, onToggle }: { 

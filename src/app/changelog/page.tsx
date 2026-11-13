@@ -12,6 +12,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   feat: 'Feature',
   fix: 'Fix',
   infra: 'Infrastructure',
+  perf: 'Performance',
   content: 'Content',
   meta: 'Meta',
 };

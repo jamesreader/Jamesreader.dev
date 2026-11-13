@@ -1,0 +1,11 @@
+---
+date: 2026-11-08
+title: Reader no longer waits behind my agents
+summary: A cache-aware admission gate now sits in front of the shared engine, so the site's requests skip ahead of background agent work.
+categories: [infra, feat]
+published: true
+---
+
+Reader shares one DGX Spark with my coding agents, and the agents fan out into parallel subagents with very large prompts. Measurements showed that a second agent stream added no output and a third made everything slower.
+
+**dgate** now decides when each request enters the engine. Agent work gets one slot and takes turns, interactive requests like yours use any free slot, and tiny requests skip the queue. The full write-up is on the blog: *A Second Agent Stream Added Nothing*.
