@@ -142,9 +142,9 @@ const WORK_WORLD: Record<string, WorldName> = {
   smis: 'radar',
   'edgewood-tools': 'mesa',
   'local-ai': 'homelab',
-  millwright: 'blueprint',
-  caretaker: 'lattice',
-  'agent-hosting': 'intake',
+  millwright: 'plant',
+  caretaker: 'patrol',
+  'agent-hosting': 'sites',
 };
 
 export default function WorkPage() {

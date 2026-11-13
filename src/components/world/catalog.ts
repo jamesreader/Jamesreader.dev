@@ -14,4 +14,7 @@ export const WORLD_META: Record<WorldName, { title: string; line: string }> = {
   blueprint: { title: 'Blueprint', line: '"I need something built": an isometric structure drawing itself over a blueprint grid.' },
   lattice: { title: 'Lattice', line: 'Security first: a hex lattice tightening around a bright core; untrusted input turned away.' },
   fit: { title: 'Fit', line: 'Job-fit evaluation: role and James on six axes, converging, overlap filled.' },
+  plant: { title: 'Plant', line: 'Millwright: reviewed blocks fly off the shelf into an app; restricted data stops dead at the gate.' },
+  patrol: { title: 'Patrol', line: 'Caretaker: a probe with no AI visits every host, the playbook fixes the alarm, the ledger grows inside a fence.' },
+  sites: { title: 'Sites', line: 'Agent-run hosting: a hit site is caged in seconds with no AI, then restored from a clean snapshot.' },
 };

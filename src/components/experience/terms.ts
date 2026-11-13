@@ -72,6 +72,26 @@ export const WORLD_TERMS: Record<WorldName, TermRule[]> = {
     { pattern: '\\bJames\\b', tag: 'james' },
     { pattern: '\\boverlap\\w*|\\bstrong fit\\b', tag: 'overlap' },
   ],
+  plant: [
+    { pattern: '\\b(?:building )?blocks?\\b|\\bcomponents?\\b', tag: 'blocks' },
+    { pattern: '\\bgate\\b', tag: 'gate' },
+    { pattern: '\\brestricted\\b|\\bsensitiv\\w*', tag: 'restricted' },
+    { pattern: '\\bbroker\\b', tag: 'broker' },
+    { pattern: '\\bprompts?\\b|\\bplain language\\b', tag: 'prompt' },
+  ],
+  patrol: [
+    { pattern: '\\bpatrol\\b|\\bprob(?:e|es|ing)\\b', tag: 'probe' },
+    { pattern: '\\bservers?\\b|\\bhosts?\\b', tag: 'hosts' },
+    { pattern: '\\bledger\\b|\\bapprovals?\\b', tag: 'ledger' },
+    { pattern: '\\bfences?\\b', tag: 'fence' },
+  ],
+  sites: [
+    { pattern: '\\b(?:web)?sites?\\b', tag: 'sites' },
+    { pattern: '\\bcontain(?:s|ed|ment)?\\b|\\bquarantin\\w*', tag: 'contained' },
+    { pattern: '\\bCloudflare\\b|\\bedge\\b', tag: 'edge' },
+    { pattern: '\\bsnapshots?\\b|\\brestor\\w*', tag: 'snapshot' },
+    { pattern: '\\bIris\\b|\\bcontrol API\\b', tag: 'agent' },
+  ],
 };
 
 /** One combined, case-insensitive regex per world; capture group i ↔ rules[i]. */

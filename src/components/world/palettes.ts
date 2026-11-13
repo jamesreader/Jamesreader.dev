@@ -64,6 +64,18 @@ export const PALETTES: Record<WorldName, Record<Theme, Palette>> = {
     dark: { a: '#00b4d8', b: '#ff7a6b', c: '#3b5266', label: '#bfe8f2' },
     light: { a: '#0091b0', b: '#d2452f', c: '#8ea4b6', label: '#005f78' },
   },
+  plant: {
+    dark: { a: '#d9a441', b: '#ff7a5c', c: '#4f4632', label: '#f2d9a6' },
+    light: { a: '#9a6a0c', b: '#c73e1d', c: '#b3a27f', label: '#6b4a08' },
+  },
+  patrol: {
+    dark: { a: '#9ccc65', b: '#ffca28', c: '#3d4a2a', label: '#dcefc4' },
+    light: { a: '#4f7a1c', b: '#a86f00', c: '#a7b38d', label: '#33520f' },
+  },
+  sites: {
+    dark: { a: '#f78fb3', b: '#ffd36e', c: '#4d3542', label: '#fbd3e2' },
+    light: { a: '#b8195a', b: '#9a5a00', c: '#bf9aab', label: '#7d0f3c' },
+  },
 };
 
 export function paletteFor(world: WorldName, theme: Theme): Palette {

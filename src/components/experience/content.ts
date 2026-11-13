@@ -16,6 +16,9 @@ export const QUESTIONS = {
   homelab: 'What hardware runs this site?',
   approach: 'How does James approach building software?',
   engagement: 'What does working with James look like?',
+  millwright: 'What is Millwright?',
+  caretaker: 'How does Caretaker decide what it can fix on its own?',
+  hosting: 'How does an AI agent run web hosting safely?',
 } as const;
 
 export interface Destination {
@@ -100,9 +103,12 @@ export const PATHS: Record<WorldName, string[]> = {
   envelopes: [QUESTIONS.smis, QUESTIONS.edgewood, QUESTIONS.consulting],
   radar: [QUESTIONS.meridian, QUESTIONS.consulting, QUESTIONS.edgewood],
   strata: [QUESTIONS.edgewood, QUESTIONS.approach, QUESTIONS.consulting],
-  blueprint: [QUESTIONS.engagement, QUESTIONS.edgewood, QUESTIONS.meridian],
-  lattice: [QUESTIONS.localAi, QUESTIONS.approach],
+  blueprint: [QUESTIONS.engagement, QUESTIONS.millwright, QUESTIONS.edgewood],
+  lattice: [QUESTIONS.millwright, QUESTIONS.localAi, QUESTIONS.approach],
   fit: [QUESTIONS.personal, QUESTIONS.edgewood],
+  plant: [QUESTIONS.caretaker, QUESTIONS.hosting, QUESTIONS.consulting],
+  patrol: [QUESTIONS.hosting, QUESTIONS.millwright, QUESTIONS.approach],
+  sites: [QUESTIONS.caretaker, QUESTIONS.millwright, QUESTIONS.consulting],
 };
 
 /** Short place-name for each world, shown in the scene eyebrow ("You asked · Edgewood, NM"). */
@@ -119,6 +125,9 @@ export const WORLD_LABEL: Record<WorldName, string> = {
   blueprint: 'Blueprint',
   lattice: 'Security',
   fit: 'Job fit',
+  plant: 'Millwright',
+  patrol: 'Caretaker',
+  sites: 'Hosting',
 };
 
 export function pathsFor(world: WorldName | undefined, asked: string): string[] {

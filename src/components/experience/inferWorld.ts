@@ -7,6 +7,9 @@ import { PROJECT_WORLD, type WorldName } from '@/components/world';
 export const INFER_WINDOW = 160;
 
 const RULES: Array<[RegExp, WorldName]> = [
+  [/Millwright/i, 'plant'],
+  [/Caretaker/i, 'patrol'],
+  [/WHMCS|cPanel|web hosting|agent-operated hosting/i, 'sites'],
   [/\bmeridian\b|\benvelope|\bbudget(?:ing)?\b|\bYNAB\b/i, 'envelopes'],
   [/\bSMIS\b|\bSAM\.gov\b|\bfederal contract|\bopportunit(?:y|ies)\b/i, 'radar'],
   [/\bclassif(?:y|ies|ied|ication|ier)\b|\bconfidential\b|\breleasable\b|\bIPRA\b/i, 'intake'],

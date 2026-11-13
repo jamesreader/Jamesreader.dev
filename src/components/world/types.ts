@@ -14,6 +14,9 @@ export const WORLD_NAMES = [
   'blueprint',     // "I need something built": blueprint grid, a wireframe structure assembling
   'lattice',       // security / philosophy: hex lattice that hardens
   'fit',           // job evaluation: two radar-chart polygons (role vs James) converging
+  'plant',         // Millwright: reviewed blocks assemble into an app; restricted data stops at the gate
+  'patrol',        // Caretaker: a model-free probe visits each host; ledger grows inside a fixed fence
+  'sites',         // agent-operated hosting: a hit site is caged with no AI, restored from a snapshot
 ] as const;
 
 export type WorldName = (typeof WORLD_NAMES)[number];
@@ -52,6 +55,9 @@ export const FOCUS_TAGS: Record<WorldName, string[]> = {
   blueprint: ['grid', 'structure'],
   lattice: ['lattice', 'core'],
   fit: ['role', 'james', 'overlap'],
+  plant: ['blocks', 'gate', 'restricted', 'broker', 'prompt'],
+  patrol: ['probe', 'hosts', 'ledger', 'fence'],
+  sites: ['sites', 'contained', 'edge', 'snapshot', 'agent'],
 };
 
 /** Which world a Reader content block / project id belongs to. */
@@ -63,9 +69,9 @@ export const PROJECT_WORLD: Record<string, WorldName> = {
   'jamesreader-dev': 'homelab',
   'edgewood-ai': 'records',
   'edgewood-tools': 'mesa',
-  millwright: 'blueprint',
-  caretaker: 'lattice',
-  'agent-hosting': 'intake',
+  millwright: 'plant',
+  caretaker: 'patrol',
+  'agent-hosting': 'sites',
 };
 
 /** Starting world for each Reader intent. */

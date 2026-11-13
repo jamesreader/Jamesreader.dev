@@ -12,9 +12,12 @@ import { strata } from './strata';
 import { blueprint } from './blueprint';
 import { lattice } from './lattice';
 import { fit } from './fit';
+import { plant } from './plant';
+import { patrol } from './patrol';
+import { sites } from './sites';
 
 export const BUILDERS: Record<WorldName, WorldBuilder> = {
-  constellation, mesa, records, intake, sparks, homelab, envelopes, radar, strata, blueprint, lattice, fit,
+  constellation, mesa, records, intake, sparks, homelab, envelopes, radar, strata, blueprint, lattice, fit, plant, patrol, sites,
 };
 
 export type { WorldBuilder, Scene, BuildCtx, Label, Stage } from './shared';
